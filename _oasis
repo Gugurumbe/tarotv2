@@ -1,0 +1,57 @@
+OASISFormat: 0.4
+Name:        tarotv
+Version:     0.0
+Synopsis:    Tarot virtuel is a game card for multiplayer purpose.
+Authors:     Vivien Kraus
+License:     LGPL-2.1 with OCaml linking exception
+Plugins:     META (0.4), StdFiles (0.4), DevFiles (0.4)
+
+Library libtarotv_server
+  Path:            src/libtarotv_server
+  BuildTools:      ocamlbuild
+  Modules:         Value, Lwt_unix_server
+  InternalModules: Lwt_value
+  BuildDepends: lwt, lwt.unix, unix
+
+Library libsgpt
+  Path: src/libsgpt
+  BuildTools: ocamlbuild
+  Modules: Tarotv
+  InternalModules: Partie, Verifications, Liste, Partie_types,
+    Partie_compter_points, Partie_arbitre, Partie_moteur,
+    Table, Protocol
+  BuildDepends: lwt, libtarotv_server
+
+Library libmgmt
+  Path: src/libsgsj
+  BuildTools: ocamlbuild
+  Modules: Mgmt
+  InternalModules: Config
+  BuildDepends: lwt, libtarotv_server
+  
+Library libcalculator
+  Path:       src/libcalculator
+  BuildTools: ocamlbuild
+  Modules:    Calculator
+  BuildDepends: lwt, libtarotv_server
+  
+Executable "calculator-server"
+  Path:       src/calculator
+  BuildTools: ocamlbuild
+  MainIs:     main.ml
+  BuildDepends: libtarotv_server, libcalculator
+  CompiledObject: best
+
+Executable "tarotv-sgpt"
+  Path: src/sgpt
+  BuildTools: ocamlbuild
+  MainIs: main.ml
+  BuildDepends: libtarotv_server, libsgpt
+  CompiledObject: best
+
+Executable "tarotv-sgsj"
+  Path: src/sgsj
+  BuildTools: ocamlbuild
+  MainIs: main.ml
+  BuildDepends: libtarotv_server, libmgmt, libsgpt
+  CompiledObject: best

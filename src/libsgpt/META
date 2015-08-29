@@ -1,0 +1,12 @@
+# OASIS_START
+# DO NOT EDIT (digest: 33916d055334497c4f3df41d971a9c53)
+version = "0.0"
+description = "Tarot virtuel is a game card for multiplayer purpose."
+requires = "lwt libtarotv_server"
+archive(byte) = "libsgpt.cma"
+archive(byte, plugin) = "libsgpt.cma"
+archive(native) = "libsgpt.cmxa"
+archive(native, plugin) = "libsgpt.cmxs"
+exists_if = "libsgpt.cma"
+# OASIS_STOP
+

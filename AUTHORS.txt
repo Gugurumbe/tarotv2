@@ -1,0 +1,8 @@
+(* OASIS_START *)
+(* DO NOT EDIT (digest: 76e1859f8e2fa58034cfda8aba1faed5) *)
+
+Authors of tarotv:
+
+* Vivien Kraus
+
+(* OASIS_STOP *)
