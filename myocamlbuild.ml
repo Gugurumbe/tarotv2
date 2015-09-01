@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 4436b83a3fbfe362cb47edd3e785af5e) *)
+(* DO NOT EDIT (digest: 42b14c4488b83101201c64c0e500dd65) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -609,6 +609,7 @@ let package_default =
   {
      MyOCamlbuildBase.lib_ocaml =
        [
+          ("libtarotv_protocol", ["src/value"], []);
           ("libtarotv_server", ["src/libtarotv_server"], []);
           ("libsgpt", ["src/libsgpt"], []);
           ("libmgmt", ["src/libsgsj"], []);
@@ -618,12 +619,20 @@ let package_default =
      flags = [];
      includes =
        [
-          ("src/sgsj", ["src/libsgpt"; "src/libsgsj"; "src/libtarotv_server"]);
-          ("src/sgpt", ["src/libsgpt"; "src/libtarotv_server"]);
-          ("src/libsgsj", ["src/libtarotv_server"]);
-          ("src/libsgpt", ["src/libtarotv_server"]);
-          ("src/libcalculator", ["src/libtarotv_server"]);
-          ("src/calculator", ["src/libcalculator"; "src/libtarotv_server"])
+          ("src/sgsj",
+            [
+               "src/libsgpt";
+               "src/libsgsj";
+               "src/libtarotv_server";
+               "src/value"
+            ]);
+          ("src/sgpt", ["src/libsgpt"; "src/libtarotv_server"; "src/value"]);
+          ("src/libtarotv_server", ["src/value"]);
+          ("src/libsgsj", ["src/libtarotv_server"; "src/value"]);
+          ("src/libsgpt", ["src/libtarotv_server"; "src/value"]);
+          ("src/libcalculator", ["src/libtarotv_server"; "src/value"]);
+          ("src/calculator",
+            ["src/libcalculator"; "src/libtarotv_server"; "src/value"])
        ]
   }
   ;;
@@ -632,6 +641,6 @@ let conf = {MyOCamlbuildFindlib.no_automatic_syntax = false}
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
-# 636 "myocamlbuild.ml"
+# 645 "myocamlbuild.ml"
 (* OASIS_STOP *)
 Ocamlbuild_plugin.dispatch dispatch_default;;

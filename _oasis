@@ -6,12 +6,17 @@ Authors:     Vivien Kraus
 License:     LGPL-2.1 with OCaml linking exception
 Plugins:     META (0.4), StdFiles (0.4), DevFiles (0.4)
 
+Library libtarotv_protocol
+  Path: src/value
+  BuildTools: ocamlbuild
+  Modules: Value, Lwt_value
+  BuildDepends: lwt
+
 Library libtarotv_server
   Path:            src/libtarotv_server
   BuildTools:      ocamlbuild
-  Modules:         Value, Lwt_unix_server
-  InternalModules: Lwt_value
-  BuildDepends: lwt, lwt.unix, unix
+  Modules:         Lwt_unix_server
+  BuildDepends: libtarotv_protocol, lwt, lwt.unix, unix
 
 Library libsgpt
   Path: src/libsgpt
@@ -20,38 +25,38 @@ Library libsgpt
   InternalModules: Partie, Verifications, Liste, Partie_types,
     Partie_compter_points, Partie_arbitre, Partie_moteur,
     Table, Protocol
-  BuildDepends: lwt, libtarotv_server
+  BuildDepends: lwt, libtarotv_server, libtarotv_protocol
 
 Library libmgmt
   Path: src/libsgsj
   BuildTools: ocamlbuild
   Modules: Mgmt
   InternalModules: Config
-  BuildDepends: lwt, libtarotv_server
+  BuildDepends: lwt, libtarotv_server, libtarotv_protocol
   
 Library libcalculator
   Path:       src/libcalculator
   BuildTools: ocamlbuild
   Modules:    Calculator
-  BuildDepends: lwt, libtarotv_server
+  BuildDepends: lwt, libtarotv_server, libtarotv_protocol
   
 Executable "calculator-server"
   Path:       src/calculator
   BuildTools: ocamlbuild
   MainIs:     main.ml
-  BuildDepends: libtarotv_server, libcalculator
+  BuildDepends: libtarotv_server, libcalculator, libtarotv_protocol
   CompiledObject: best
 
 Executable "tarotv-sgpt"
   Path: src/sgpt
   BuildTools: ocamlbuild
   MainIs: main.ml
-  BuildDepends: libtarotv_server, libsgpt
+  BuildDepends: libtarotv_server, libsgpt, libtarotv_protocol
   CompiledObject: best
 
 Executable "tarotv-sgsj"
   Path: src/sgsj
   BuildTools: ocamlbuild
   MainIs: main.ml
-  BuildDepends: libtarotv_server, libmgmt, libsgpt
+  BuildDepends: libtarotv_server, libmgmt, libsgpt, libtarotv_protocol
   CompiledObject: best

@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: a590f07ec34cfa5a764b3f209ebecd44)
+# DO NOT EDIT (digest: 0cb23b6917f9fe6e537f209328bf9046)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -14,50 +14,61 @@ true: annot, bin_annot
 ".git": not_hygienic
 "_darcs": -traverse
 "_darcs": not_hygienic
+# Library libtarotv_protocol
+"src/value/libtarotv_protocol.cmxs": use_libtarotv_protocol
+<src/value/*.ml{,i,y}>: pkg_lwt
 # Library libtarotv_server
 "src/libtarotv_server/libtarotv_server.cmxs": use_libtarotv_server
 <src/libtarotv_server/*.ml{,i,y}>: pkg_lwt
 <src/libtarotv_server/*.ml{,i,y}>: pkg_lwt.unix
 <src/libtarotv_server/*.ml{,i,y}>: pkg_unix
+<src/libtarotv_server/*.ml{,i,y}>: use_libtarotv_protocol
 # Library libsgpt
 "src/libsgpt/libsgpt.cmxs": use_libsgpt
 <src/libsgpt/*.ml{,i,y}>: pkg_lwt
 <src/libsgpt/*.ml{,i,y}>: pkg_lwt.unix
 <src/libsgpt/*.ml{,i,y}>: pkg_unix
+<src/libsgpt/*.ml{,i,y}>: use_libtarotv_protocol
 <src/libsgpt/*.ml{,i,y}>: use_libtarotv_server
 # Library libmgmt
 "src/libsgsj/libmgmt.cmxs": use_libmgmt
 <src/libsgsj/*.ml{,i,y}>: pkg_lwt
 <src/libsgsj/*.ml{,i,y}>: pkg_lwt.unix
 <src/libsgsj/*.ml{,i,y}>: pkg_unix
+<src/libsgsj/*.ml{,i,y}>: use_libtarotv_protocol
 <src/libsgsj/*.ml{,i,y}>: use_libtarotv_server
 # Library libcalculator
 "src/libcalculator/libcalculator.cmxs": use_libcalculator
 <src/libcalculator/*.ml{,i,y}>: pkg_lwt
 <src/libcalculator/*.ml{,i,y}>: pkg_lwt.unix
 <src/libcalculator/*.ml{,i,y}>: pkg_unix
+<src/libcalculator/*.ml{,i,y}>: use_libtarotv_protocol
 <src/libcalculator/*.ml{,i,y}>: use_libtarotv_server
 # Executable calculator-server
 <src/calculator/main.{native,byte}>: pkg_lwt
 <src/calculator/main.{native,byte}>: pkg_lwt.unix
 <src/calculator/main.{native,byte}>: pkg_unix
 <src/calculator/main.{native,byte}>: use_libcalculator
+<src/calculator/main.{native,byte}>: use_libtarotv_protocol
 <src/calculator/main.{native,byte}>: use_libtarotv_server
 <src/calculator/*.ml{,i,y}>: pkg_lwt
 <src/calculator/*.ml{,i,y}>: pkg_lwt.unix
 <src/calculator/*.ml{,i,y}>: pkg_unix
 <src/calculator/*.ml{,i,y}>: use_libcalculator
+<src/calculator/*.ml{,i,y}>: use_libtarotv_protocol
 <src/calculator/*.ml{,i,y}>: use_libtarotv_server
 # Executable tarotv-sgpt
 <src/sgpt/main.{native,byte}>: pkg_lwt
 <src/sgpt/main.{native,byte}>: pkg_lwt.unix
 <src/sgpt/main.{native,byte}>: pkg_unix
 <src/sgpt/main.{native,byte}>: use_libsgpt
+<src/sgpt/main.{native,byte}>: use_libtarotv_protocol
 <src/sgpt/main.{native,byte}>: use_libtarotv_server
 <src/sgpt/*.ml{,i,y}>: pkg_lwt
 <src/sgpt/*.ml{,i,y}>: pkg_lwt.unix
 <src/sgpt/*.ml{,i,y}>: pkg_unix
 <src/sgpt/*.ml{,i,y}>: use_libsgpt
+<src/sgpt/*.ml{,i,y}>: use_libtarotv_protocol
 <src/sgpt/*.ml{,i,y}>: use_libtarotv_server
 # Executable tarotv-sgsj
 <src/sgsj/main.{native,byte}>: pkg_lwt
@@ -65,11 +76,13 @@ true: annot, bin_annot
 <src/sgsj/main.{native,byte}>: pkg_unix
 <src/sgsj/main.{native,byte}>: use_libmgmt
 <src/sgsj/main.{native,byte}>: use_libsgpt
+<src/sgsj/main.{native,byte}>: use_libtarotv_protocol
 <src/sgsj/main.{native,byte}>: use_libtarotv_server
 <src/sgsj/*.ml{,i,y}>: pkg_lwt
 <src/sgsj/*.ml{,i,y}>: pkg_lwt.unix
 <src/sgsj/*.ml{,i,y}>: pkg_unix
 <src/sgsj/*.ml{,i,y}>: use_libmgmt
 <src/sgsj/*.ml{,i,y}>: use_libsgpt
+<src/sgsj/*.ml{,i,y}>: use_libtarotv_protocol
 <src/sgsj/*.ml{,i,y}>: use_libtarotv_server
 # OASIS_STOP
