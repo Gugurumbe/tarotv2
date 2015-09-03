@@ -1,14 +1,10 @@
 open Value
-    
-exception Invalid_constraint of Bytes.t * Bytes.t
-exception Invalid_option of Bytes.t
-exception Invalid_config_elt of Bytes.t
 
 let decrire_option intitule = function
-  | Config.Int (min, max, increment) ->
+  | (nom, Config.Int (min, max, increment)) ->
     Printf.sprintf
-      "\"%S\" est un entier%S%S%S."
-      intitule
+      "%s (%S) est un entier%s%s%s."
+      intitule nom
       (match min with None -> "" | Some min ->
         Printf.sprintf ", au minimum %d" min)
       (match max with None -> "" | Some max ->
@@ -17,20 +13,37 @@ let decrire_option intitule = function
         Printf.sprintf ", multiple de %d" i)
 
 let decrire_config cfg =
-  Printf.sprintf
-    "On choisit entre %d et %d joueurs (inclus), et on fournit les \
-     options suivantes :\n%s\n%!"
-    cfg.Config.min_players cfg.Config.max_players
-    (Bytes.concat
-       "\n"
-       (Hashtbl.fold
-          (fun intitule opt acc ->
-             (decrire_option intitule opt) :: acc)
-          cfg.Config.options []))
+  (Bytes.concat
+     "\n"
+     (Hashtbl.fold
+        (fun intitule opt acc ->
+           (decrire_option intitule opt) :: acc)
+        cfg []))
 
-let repeter get_config = function
+let verifier_aux effectuer_requete = function
+  | List [String np; arg] ->
+    Config.valider_invitation effectuer_requete (int_of_string np) arg
+  | _ ->
+    Lwt.fail (Failure "Format désiré : (\"5\" ...) pour 5 joueurs")
+
+let verifier_invitation effectuer_requete = function
   | Lwt_stream.Value v ->
-    Lwt.try_bind (get_config)
+    Lwt.try_bind
+      (fun () -> verifier_aux effectuer_requete v)
+      (fun () ->
+         Lwt.return
+           (List [String "Accepté."]))
+      (fun exn ->
+         Lwt.return
+           (List [String "Refusé."; String (Printexc.to_string exn)]))
+  | Lwt_stream.Error exn ->
+    Lwt.return
+      (List [String "Vous avez commis une erreur :";
+             String (Printexc.to_string exn)])
+
+let repeter effectuer_requete = function
+  | Lwt_stream.Value v ->
+    Lwt.try_bind (fun () -> Config.get_config effectuer_requete)
       (fun cfg ->
          let ret =
            List [String (decrire_config cfg);
@@ -47,5 +60,4 @@ let repeter get_config = function
              String (Printexc.to_string exn)])
       
 let run requete_jeu =
-  let config = Config.get_config requete_jeu in
-  Lwt_stream.map_s (repeter config)
+  Lwt_stream.map_s (verifier_invitation requete_jeu)

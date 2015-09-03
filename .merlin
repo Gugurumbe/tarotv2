@@ -6,6 +6,7 @@ S src/sgpt
 S src/libsgsj
 S src/sgsj
 S src/libtarotv_server
+S src/value
 B _build/src
 B _build/src/calculator
 B _build/src/libcalculator
@@ -14,6 +15,7 @@ B _build/src/sgpt
 B _build/src/libsgsj
 B _build/src/sgsj
 B _build/src/libtarotv_server
+B _build/src/value
 PKG unix
 PKG lwt
 PKG lwt.unix

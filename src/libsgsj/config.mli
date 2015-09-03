@@ -1,18 +1,19 @@
-exception Invalid_constraint of Bytes.t * Bytes.t
-exception Invalid_option of Bytes.t
-exception Invalid_config_elt of Bytes.t
+exception SGPT_error of Bytes.t
+exception Invalid_server_response
 
 type config_type =
   | Int of (int option * int option * int option)
   (* Minimum - maximum - incrément *)
 
-type configuration = {
-  min_players: int;
-  max_players: int;
-  options: (Bytes.t, config_type) Hashtbl.t
-}
+type configuration = (Bytes.t, (Bytes.t * config_type)) Hashtbl.t
 
 val get_config:
   (Value.t Lwt_stream.t -> Value.t Lwt_stream.t) ->
   (* Fonction pour effectuer une requête de jeu *)
-  (unit -> configuration Lwt.t)
+  configuration Lwt.t
+
+val valider_invitation:
+  (Value.t Lwt_stream.t -> Value.t Lwt_stream.t) ->
+  (* Fonction pour effectuer une requête de jeu *)
+  int -> Value.t -> unit Lwt.t
+(* Lève Invalid_argument nom_de_l_argument si un argument manque ou n'est pas correct *)

@@ -1,77 +1,90 @@
 open Value
-    
-exception Invalid_constraint of Bytes.t * Bytes.t
-exception Invalid_option of Bytes.t
-exception Invalid_config_elt of Bytes.t
+
+exception SGPT_error of Bytes.t
+exception Invalid_server_response
 
 type config_type =
   | Int of (int option * int option * int option)
   (* Minimum - maximum - incrément *)
 
-type configuration = {
-  min_players: int;
-  max_players: int;
-  options: (Bytes.t, config_type) Hashtbl.t
-}
+type configuration = (Bytes.t, (Bytes.t * config_type)) Hashtbl.t
 
-let read_config_opt = function
-  | List (String intitule :: String "int" :: constraints) ->
-    let min = ref None in
-    let max = ref None in
-    let increment = ref None in
-    let iter_constraint = function
-      | List [String "min"; String m] ->
-        min := Some (int_of_string m)
-      | List [String "max"; String m] ->
-        max := Some (int_of_string m)
-      | List [String "increment"; String i] ->
-        increment := Some (int_of_string i)
-      | c -> raise (Invalid_constraint
-                      ("int", Value.print false c))
-    in
-    let () = List.iter iter_constraint constraints in
-    (intitule, Int (!min, !max, !increment))
-  | c -> raise (Invalid_option (Value.print false c))
+let read_config_opt x =
+  let table = to_table x in
+  let find = Hashtbl.find table in
+  let find_opt x =
+    try Some (to_int (find x))
+    with Not_found -> None in
+  match to_string (find "type") with
+  | "int" -> (to_string (find "name"), Int (find_opt "min", find_opt "max", find_opt "incr"))
+  | _ -> raise Invalid_server_response
 
-let read_config = function
-  | List elements ->
-    let min_players = ref 0 in
-    let max_players = ref max_int in
-    let options = Hashtbl.create 10 in
-    let iter = function
-      | List [String "min_players"; String min] ->
-        min_players := int_of_string min
-      | List [String "max_players"; String max] ->
-        max_players := int_of_string max
-      | List [String "options"; List opt] ->
-        List.iter
-          (fun opt ->
-             let (nom, t) = read_config_opt opt in
-             Hashtbl.add options nom t)
-          opt
-      | c -> raise (Invalid_config_elt (Value.print false c))
-    in
-    let () = List.iter iter elements in
-    {min_players = !min_players; max_players = !max_players;
-     options = options}
-  | String str ->
-    failwith
-      (Printf.sprintf
-         "Que voulez-vous que je fasse de %s, M. SGPT ?"
-         str)
+let read_config rep =
+  try
+    let (res, arg) = to_labelled rep in
+    if res = "ERR"
+    then raise (SGPT_error (to_string arg))
+    else
+      let table = to_table arg in
+      let r = Hashtbl.create (Hashtbl.length table) in
+      let () = Hashtbl.iter (fun nom_court x ->
+          Hashtbl.add r nom_court (read_config_opt x))
+          table in
+      r
+  with exn ->
+    let () = Printf.printf "Warning: %S.\n%!" (Printexc.to_string exn) in
+    raise Invalid_server_response
 
-let get_config envoyer_requete () =
+let get_config envoyer_requete =
   let (requete, requeter) = Lwt_stream.create () in
-  let () = requeter (Some (String "config")) in
+  let () = requeter (Some (of_labelled "config" (List []))) in
   let reponse = envoyer_requete requete in
   let (>>=) = Lwt.bind in
   Lwt_stream.get reponse
   >>= (fun item ->
       let () = requeter None in
       match item with
-      | None -> Lwt.fail (Failure "SGPT n'a pas répondu")
+      | None -> Lwt.fail Invalid_server_response
       | Some rep ->
         try
           let cfg = read_config rep in
           Lwt.return cfg
         with exn -> Lwt.fail exn)
+
+let valider_invitation envoyer_requete njoueurs argument =
+  let open Lwt in
+  (get_config envoyer_requete)
+  >>= (fun table ->
+      try
+        let verifier argument nom_court = function
+          | (_, Int (minp, maxp, incrp)) ->
+            let valeur = to_int
+                (Hashtbl.find argument nom_court) in
+            let minimum = ref 0 in
+            let ok_min =
+              match minp with None -> true
+                            | Some m ->
+                              let () = minimum := m in
+                              valeur >= m
+            in
+            let ok_max =
+              match maxp with None -> true
+                            | Some m -> valeur <= m
+            in
+            let ok_incr =
+              match incrp with None -> true
+                             | Some m -> (valeur - !minimum) mod m = 0
+            in
+            ok_min && ok_max && ok_incr in
+        let verifier_safe arg nom assoc =
+          try
+            if verifier arg nom assoc then ()
+            else raise (Invalid_argument nom)
+          with _ -> raise (Invalid_argument nom)
+        in
+        let argument = to_table argument in
+        if Hashtbl.mem argument "nplayers" then raise (Invalid_argument "nplayers")
+        else let () = Hashtbl.add argument "nplayers" (of_int njoueurs) in
+          let () = Hashtbl.iter (verifier_safe argument) table in
+          Lwt.return ()
+      with exn -> Lwt.fail exn)

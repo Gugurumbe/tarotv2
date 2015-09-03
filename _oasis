@@ -10,6 +10,7 @@ Library libtarotv_protocol
   Path: src/value
   BuildTools: ocamlbuild
   Modules: Value, Lwt_value
+  InternalModules: Value_read, Comparaison
   BuildDepends: lwt
 
 Library libtarotv_server
