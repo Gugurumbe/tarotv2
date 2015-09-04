@@ -1,6 +1,10 @@
 # OASIS_START
-# DO NOT EDIT (digest: abca9cad4b00fe64e8b4ab89f916a504)
+# DO NOT EDIT (digest: 6133b228c40d44892e2a7dc43a21c93c)
 Mgmt
 Config
-Invitations
+Joueur_hors_jeu
+Arbitre
+Database
+Videur
+Protocol_sgsj
 # OASIS_STOP

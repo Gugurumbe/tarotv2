@@ -32,7 +32,7 @@ Library libmgmt
   Path: src/libsgsj
   BuildTools: ocamlbuild
   Modules: Mgmt
-  InternalModules: Config, Invitations, Joueur
+  InternalModules: Config, Joueur_hors_jeu, Arbitre, Database, Videur, Protocol_sgsj
   BuildDepends: lwt, libtarotv_server, libtarotv_protocol
   
 Library libcalculator
