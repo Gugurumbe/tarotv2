@@ -11,3 +11,5 @@ val get_config:
   (Value.t Lwt_stream.t -> Value.t Lwt_stream.t) ->
   (* Fonction pour effectuer une requête de jeu *)
   configuration Lwt.t
+
+val print_config: configuration -> Value.t

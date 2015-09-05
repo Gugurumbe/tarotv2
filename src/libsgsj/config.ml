@@ -50,3 +50,27 @@ let get_config envoyer_requete =
           let cfg = read_config rep in
           Lwt.return cfg
         with exn -> Lwt.fail exn)
+
+let print_config c =
+  let table_elements = Hashtbl.create (Hashtbl.length c) in
+  let () = Hashtbl.iter (fun nom_court (nom_long, opt) ->
+      let table_opt = Hashtbl.create 5 in
+      let () = Hashtbl.add table_opt "name" (of_string nom_long) in
+      let () =
+        match opt with
+        | Int (a, b, c) ->
+          let () = Hashtbl.add table_opt "type" (of_string "int") in
+          let add_opt cle = function
+            | None -> ()
+            | Some i -> Hashtbl.add table_opt cle (of_string (string_of_int i))
+          in
+          let () = add_opt "min" a in
+          let () = add_opt "max" b in
+          let () = add_opt "incr" c in
+          ()
+      in
+      let v = of_table table_opt in
+      Hashtbl.add table_elements nom_court v)
+      c in
+  of_table table_elements
+        

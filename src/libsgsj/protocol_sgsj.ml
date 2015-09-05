@@ -69,6 +69,10 @@ module Make (Backend:BACKEND) (Frontend:FRONTEND) = struct
       let () = attendus 1 in
       (Jhj.deconnecter (Value.to_string (find "id")))
       >>= fun () -> return (Value.of_list [])
+    | "configuration" ->
+      let () = attendus 0 in
+      Comm.get_config () >>= fun c ->
+      return (Value.of_labelled "config" (Config.print_config c))
     | "peek_message" ->
       let () = attendus 1 in
       (Jhj.peek_message (Value.to_string (find "id")))

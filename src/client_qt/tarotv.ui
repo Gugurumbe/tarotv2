@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>main_window</class>
+ <widget class="QMainWindow" name="main_window">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>758</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="ressource.qrc">
+    <normaloff>:/images/icone.png</normaloff>:/images/icone.png</iconset>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">* {
+	color: rgb(210, 255, 212);
+}
+QMenuBar{
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 40, 5, 255), stop:1 rgba(0, 0, 0, 255));
+}
+QMenuBar::item {
+	spacing: 1em;
+	background: transparent;
+	color: rgb(210, 255, 212);
+	padding: 0.5ex 1em;
+ }
+QMenuBar::item:selected, QMenu::item:selected{
+	background-color: rgb(0, 85, 0);
+}
+QMenu{
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 40, 5, 255), stop:1 rgba(0, 0, 0, 255));
+	color: rgb(210, 255, 212);
+}
+#action_quitter{
+	background-color: red;
+}
+#centralwidget{
+	background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.7, fx:0.5, 		fy:0.5, stop:0 rgba(0, 140, 18, 255), stop:1 rgba(0, 70, 9, 255));
+}
+#statusbar{
+	background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0.003, y2:0.0023, stop:0 rgba(0, 38, 0, 255), stop:1 rgba(0, 26, 0, 255));
+	color: white
+}
+QDockWidget *{
+	background-color: rgb(0, 32, 0);
+	color: rgb(210, 255, 212);
+}
+QDockWidget::title{
+	text-align: center;
+	background-color:black;
+ }
+QDockWidget::separator, QMainWindow::separator{
+	background-color: black;
+}
+QDockWidget::separator:hover, QMainWindow::separator:hover{
+	background-color: rgb(0, 32, 0);
+}
+QListView{
+	border: 1px solid rgb(210, 255, 212);
+	alternate-background-color: rgb(0, 64, 0);
+	show-decoration-selected: 1;
+}
+QListView::item{
+	padding-left: 1em;
+	background-color: rgb(0, 32, 0);
+}
+QListView::item:selected{
+	padding-left: 1em;
+	background-color: rgb(0, 96, 0);
+}
+QPushButton{
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 94, 12, 255), stop:1 rgba(0, 29, 3, 255));
+	border: 1px solid rgb(210, 255, 212);
+	border-radius: 5px;
+	padding: 0.5ex 1em;
+}
+QPushButton:hover{
+	background-color: rgb(210, 255, 212);
+	color: rgb(0, 32, 0);
+}
+QPushButton:pressed{
+	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:0, stop:0 rgba(0, 94, 12, 255), stop:1 rgba(0, 29, 3, 255));
+	color: rgb(0, 32, 0);
+	color: rgb(210, 255, 212);
+}
+:disabled{
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 94, 12, 64), stop:1 rgba(0, 29, 3, 64));
+	border: 1px solid rgba(210, 255, 212, 64);
+	color: rgba(210, 255, 212, 64);
+	padding: 0.5ex 1em;
+}
+QTextEdit, QLineEdit{
+	border: 1px solid rgb(210, 255, 212);
+}
+QTabBar{
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(0, 40, 5, 255), stop:1 rgba(0, 0, 0, 255));
+}
+QTabBar::tab{
+	background-color: rgb(0, 32, 0);
+	border: 1px solid rgb(210, 255, 212);
+	padding: 0.5ex 0.5em;
+}
+QTabBar::tab:hover, QTabBar::tab:selected:hover{
+	background-color: rgb(210, 255, 212);
+	color: rgb(0, 32, 0);
+}
+QTabBar::tab:selected{
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 128, 0, 255), stop:1 rgba(0, 64, 0, 255));
+	color: rgb(210, 255, 212);
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>758</width>
+     <height>39</height>
+    </rect>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <widget class="QMenu" name="menuServeur">
+    <property name="title">
+     <string>&amp;Serveur</string>
+    </property>
+    <addaction name="action_connexion"/>
+    <addaction name="action_solo"/>
+    <addaction name="action_heberger"/>
+   </widget>
+   <widget class="QMenu" name="menuAide">
+    <property name="title">
+     <string>&amp;Aide</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuTarot_virtuel">
+    <property name="title">
+     <string>&amp;Tarot virtuel</string>
+    </property>
+    <addaction name="action_quitter"/>
+   </widget>
+   <widget class="QMenu" name="menuFen_tres">
+    <property name="title">
+     <string>&amp;Fenêtres</string>
+    </property>
+    <addaction name="action_win_listejoueurs"/>
+    <addaction name="action_discussion"/>
+   </widget>
+   <addaction name="menuTarot_virtuel"/>
+   <addaction name="menuServeur"/>
+   <addaction name="menuFen_tres"/>
+   <addaction name="menuAide"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dock_liste_joueurs">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="windowTitle">
+    <string>Liste des joueurs</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dock_lj_content">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="tarotv::ui::vue_jhj" name="liste_jhj">
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::MultiSelection</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="bouton_inviter">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>&amp;Inviter</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_discussion">
+   <property name="windowTitle">
+    <string>Discussion</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QTextEdit" name="textEdit">
+       <property name="undoRedoEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="cont_boutons" native="true">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLineEdit" name="lineEdit"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="bouton_envoyer">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Envoyer</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="action_connexion">
+   <property name="text">
+    <string>Se connecter à un serveur en ligne...</string>
+   </property>
+  </action>
+  <action name="action_solo">
+   <property name="text">
+    <string>Jouer tout seul...</string>
+   </property>
+  </action>
+  <action name="action_heberger">
+   <property name="text">
+    <string>Créer un serveur...</string>
+   </property>
+  </action>
+  <action name="action_quitter">
+   <property name="text">
+    <string>&amp;Quitter</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="action_win_listejoueurs">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Liste des joueurs</string>
+   </property>
+  </action>
+  <action name="action_discussion">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Discussion</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>tarotv::ui::vue_jhj</class>
+   <extends>QListView</extends>
+   <header>vue_jhj.hpp</header>
+   <slots>
+    <signal>selection_changed()</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="ressource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>action_quitter</sender>
+   <signal>triggered()</signal>
+   <receiver>main_window</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_win_listejoueurs</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>dock_liste_joueurs</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>106</x>
+     <y>293</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dock_liste_joueurs</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>action_win_listejoueurs</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>106</x>
+     <y>293</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_discussion</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>dock_discussion</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>487</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dock_discussion</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>action_discussion</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>487</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
