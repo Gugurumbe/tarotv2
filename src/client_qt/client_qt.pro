@@ -9,7 +9,7 @@ QT += network widgets
 OBJECTS_DIR=../../_build/src/client_qt/
 
 # Input
-HEADERS += tarotv.hpp ui_tarotv.h value.hpp joueur_hors_jeu.hpp q_requests.hpp q_value_stream.hpp vue_jhj.hpp
+HEADERS += tarotv.hpp value.hpp joueur_hors_jeu.hpp q_requests.hpp q_value_stream.hpp vue_jhj.hpp
 FORMS += tarotv.ui
 SOURCES += main.cpp tarotv.cpp value.cpp joueur_hors_jeu.cpp config.cpp q_requests.cpp q_value_stream.cpp vue_jhj.cpp
 RESOURCES += ressource.qrc
