@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 0cb23b6917f9fe6e537f209328bf9046)
+# DO NOT EDIT (digest: 179180234bb7323615d02a354cb7a753)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -85,6 +85,7 @@ true: annot, bin_annot
 <src/sgsj/*.ml{,i,y}>: use_libsgpt
 <src/sgsj/*.ml{,i,y}>: use_libtarotv_protocol
 <src/sgsj/*.ml{,i,y}>: use_libtarotv_server
+# Executable tarotv-client
 # OASIS_STOP
 <_build/src/client_qt/*>: include_generated
 <**/*.cpp>: c_plus_plus

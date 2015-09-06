@@ -5,6 +5,7 @@ Synopsis:    Tarot virtuel is a game card for multiplayer purpose.
 Authors:     Vivien Kraus
 License:     LGPL-2.1 with OCaml linking exception
 Plugins:     META (0.4), StdFiles (0.4), DevFiles (0.4)
+PostBuildCommand: ocamlbuild src/client_qt/client_qt.cxxnative
 
 Library libtarotv_protocol
   Path: src/value
@@ -61,3 +62,8 @@ Executable "tarotv-sgsj"
   MainIs: main.ml
   BuildDepends: libtarotv_server, libmgmt, libsgpt, libtarotv_protocol
   CompiledObject: best
+
+Executable "tarotv-client"
+  Path: src/client_qt
+  BuildTools: ocamlbuild
+  MainIs: client_qt.ml

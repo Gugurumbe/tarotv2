@@ -904,12 +904,13 @@ let qmake_dispatch = function
     Options.make_links := false
   | After_rules ->
     let open Pathname in
-    rule "Link a c++ executable that uses Qt"
+    dep ["fake_client_qt"] ["src" / "client_qt" / "client_qt" -.- "cxxnative"];
+    rule "Link a c++ executable that uses Qt. The executable will have .byte extension."
       ~deps:["%.qtobjs"; "%.qtpackages"]
-      ~prod:"%.qtexec"
+      ~prod:"%.cxxnative"
       (fun env build ->
          let dir = Pathname.dirname (env "%.qtobjs") in
-         let output = env "%.qtexec" in
+         let output = env "%.byte" in
          let objlist = pwd / (env "%.qtobjs") in
          let liblist = pwd / (env "%.qtpackages") in
          let objs = List.map (fun o -> dir / o) (read_lines objlist) in

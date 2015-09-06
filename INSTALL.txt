@@ -1,3 +1,19 @@
+Additional dependencies
+=======================
+
+In order to compile this package, you will also need:
+
+*c++, g++, or clang
+*qmake (optional)
+*qdoc
+*moc
+*uic
+*rcc
+
+The 3 c++ compilers are the executables searched in PATH. If you have another compiler, it will work fine provided that you change your PATH and / or do some ln -s.
+
+QMake is optional, but if it is not found in PATH, the other Qt tools, the libs and the incs will be searched in PATH and not in qmake -query paths.
+
 (* OASIS_START *)
 (* DO NOT EDIT (digest: bf9a1eab5adab61a076e112f35060e4c) *)
 

@@ -1,3 +1,8 @@
+Additional information
+======================
+
+Oasis is not aware that the project is using Qt.
+
 (* OASIS_START *)
 (* DO NOT EDIT (digest: a1b918c47089655a98e5527f84da4a0a) *)
 
