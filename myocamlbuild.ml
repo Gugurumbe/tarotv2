@@ -643,4 +643,369 @@ let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
 # 645 "myocamlbuild.ml"
 (* OASIS_STOP *)
-Ocamlbuild_plugin.dispatch dispatch_default;;
+exception Invalid_escaped of char
+exception Invalid_character of char
+exception Invalid_hex_digit of char
+exception Invalid_digit of char
+exception Invalid_escaped_number of int
+exception Parenthesis_mismatch
+exception Invalid_nonstring_char of char
+
+exception Invalid_escape_sequence of char list
+
+type token_unescaped =
+  | Nothing
+  | Char_skipped of char
+  | Unescaped of char list
+
+let read_unescaped () =
+  let escape_sequence = ref [] in
+  let chars = Buffer.create 80 in
+  let skipped = ref true in
+  let push c =
+    let () = Buffer.add_char chars c in
+    let () = escape_sequence := [] in
+    None
+  in
+  let est_chiffre_hex c =
+    (c >= '0' && c <= '9')
+    || (c >= 'A' && c <= 'F')
+    || (c >= 'a' && c <= 'f')
+  in
+  let est_chiffre c = c >= '0' && c <= '9' in
+  let chiffre c =
+    if c >= '0' && c <= '9'
+    then (int_of_char c - int_of_char '0') else
+    if c >= 'A' && c <= 'F'
+    then (int_of_char c - int_of_char 'A' + 10) else
+    if c >= 'a' && c <= 'f'
+    then (int_of_char c - int_of_char 'a' + 10)
+    else failwith "Pas un chiffre" in
+  let resolve_escape_sequence () =
+    try
+      match List.rev !escape_sequence with
+      | [] -> None
+      | ['\\'; 'n'] -> push '\n'
+      | ['\\'; 'r'] -> push '\r'
+      | ['\\'; 't'] -> push '\t'
+      | ['\\'; 'b'] -> push '\b'
+      | ['\\'; sic]
+        when sic = '\\' || sic = '\"'
+             || sic = '\'' || sic = ' '
+        -> push sic
+      | ['\\'; 'x'; c1; c2]
+        when est_chiffre_hex c1 && est_chiffre_hex c2 ->
+        push (char_of_int (chiffre c1 * 16 + chiffre c2))
+      | ['\\'; 'x'; c1; c2]
+        when est_chiffre_hex c1 ->
+        raise (Invalid_hex_digit c2)
+      | ['\\'; 'x'; c]
+        when est_chiffre_hex c -> None
+      | ['\\'; 'x'; c] -> raise (Invalid_hex_digit c)
+      | ['\\'; 'x'] -> None
+      | ['\\'; c1; c2; c3]
+        when est_chiffre c1
+          && est_chiffre c2
+          && est_chiffre c3
+          && chiffre c1 * 100
+             + chiffre c2 * 10
+             + chiffre c3 < 256 ->
+        push (char_of_int
+                (chiffre c1 * 100
+                 + chiffre c2 * 10
+                 + chiffre c3))
+      | ['\\'; c1; c2; c3]
+        when est_chiffre c1
+          && est_chiffre c2
+          && est_chiffre c3 ->
+        raise (Invalid_escaped_number
+                 (chiffre c1 * 100
+                  + chiffre c2 * 10
+                  + chiffre c3))
+      | ['\\'; _; _; c3] when not (est_chiffre c3) ->
+        raise (Invalid_digit c3)
+      | ['\\'; c1; c2]
+        when est_chiffre c1 && est_chiffre c2
+             && chiffre c1 * 100
+                + chiffre c2 * 10 < 256 -> None
+      | ['\\'; c1; c2]
+        when est_chiffre c1 && est_chiffre c2 ->
+        raise (Invalid_escaped_number
+                 (chiffre c1 * 100
+                  + chiffre c2 * 10))
+      | ['\\'; _; c2] when not (est_chiffre c2) ->
+        raise (Invalid_digit c2)
+      | ['\\'; '0'] -> None
+      | ['\\'; '1'] -> None
+      | ['\\'; '2'] -> None
+      | ['\\'; c] when est_chiffre c ->
+        raise (Invalid_escaped_number (chiffre c * 100))
+      | ['\\'; c] -> raise (Invalid_escaped c)
+      | ['\\'] -> None
+      | ['\"'] ->
+        let () = skipped := true in
+        let () = escape_sequence := [] in
+        let str = Buffer.create 80 in
+        let () = Buffer.add_buffer str chars in
+        let () = Buffer.clear chars in
+        Some str
+      | [c] when int_of_char c < 32
+              || int_of_char c >= 127 ->
+        raise (Invalid_character c)
+      | [c] -> push c
+      | list -> raise (Invalid_escape_sequence list)
+    with exn ->
+      let () = escape_sequence := List.tl !escape_sequence in
+      raise exn
+  in
+  let read = function
+    | '\"' when !skipped -> begin
+        skipped := false;
+        Nothing
+      end
+    | c when !skipped ->
+      Char_skipped c
+    | c -> begin
+        escape_sequence := c :: !escape_sequence;
+        match resolve_escape_sequence () with
+        | None -> Nothing
+        | Some str ->
+          let tab = Array.init (Buffer.length str)
+              (Buffer.nth str) in
+          Unescaped (Array.to_list tab)
+      end
+  in
+  read
+
+let read_without_bol_until_eq () =
+  let buff = Buffer.create 80 in
+  let read = function
+    | '\r' when Buffer.length buff = 0 -> None
+    | '\n' when Buffer.length buff = 0 -> None
+    | '\t' when Buffer.length buff = 0 -> None
+    (* Entre le égal et le guillemet il peut y avoir du blanc *)
+    | ' ' when Buffer.length buff = 0 -> None
+    | '=' ->
+      let tab = Array.init (Buffer.length buff)
+          (Buffer.nth buff) in
+      let () = Buffer.clear buff in
+      Some (Array.to_list tab)
+    | c -> let () = Buffer.add_char buff c in
+      None
+  in
+  read
+
+let read_config_file () =
+  let reader = read_unescaped () in
+  let reader_key = read_without_bol_until_eq () in
+  let key = ref [] in
+  let values_rev = ref [] in
+  let read c =
+    match reader c with
+    | Unescaped lst ->
+      let () = values_rev := lst :: !values_rev in
+      None
+    | Nothing -> None
+    | Char_skipped ' '
+    | Char_skipped '\t' -> None
+    | Char_skipped '\r'
+    | Char_skipped '\n' when !key <> [] || !values_rev <> [] ->
+      (* \r\n is not in that case *)
+      let k = !key in
+      let v = List.rev !values_rev in
+      let () = key := [] in
+      let () = values_rev := [] in
+      Some (k, v)
+    | Char_skipped ',' -> None
+    | Char_skipped c ->
+      let () = match reader_key c with
+        | None -> ()
+        | Some k ->
+          let () = key := k in
+          ()
+      in
+      None
+  in
+  read
+    
+let load_qmake_data () =
+  let chan = open_in_bin "setup.qmake.data" in
+  let reader = read_config_file () in
+  let table = Hashtbl.create 10 in
+  let read c = 
+    match reader c with
+    | None -> ()
+    | Some (k, v) ->
+      let k = String.concat "" (List.map (String.make 1) k) in
+      let v = List.map
+          (fun v -> String.concat "" (List.map (String.make 1) v))
+          v in
+      Hashtbl.add table k v
+  in
+  let input_one () =
+    let char = input_char chan in
+    read char
+  in
+  let rec input () =
+    try let () = input_one () in
+      input ()
+    with _ ->
+      let () = read '\n' in
+      ()
+  in
+  let () = input () in
+  table
+
+let read_lines fname =
+  let chan = open_in_bin fname in
+  let rec aux acc =
+    try let line = input_line chan in
+      aux (line :: acc)
+    with End_of_file ->
+      let () = close_in chan in
+      List.rev acc
+  in
+  aux []
+
+let table =
+  try load_qmake_data ()
+  with _ -> let () = Printf.eprintf "Please run \"ocaml setup.ml -configure\".\n%!" in
+    exit 1
+
+let find_one k =
+  try
+    match Hashtbl.find table k with
+    | [] -> raise Not_found
+    | a :: _ -> a
+  with Not_found ->
+    let () = Printf.printf "Could not find a %S entry in setup.qmake.data.\n%!"
+        k in
+    raise Not_found
+
+let find_all k =
+  try
+    Hashtbl.find table k
+  with Not_found ->
+    let () = Printf.printf "Could not find a %S entry in setup.qmake.data.\n%!"
+        k in
+    raise Not_found
+
+let filter_map f list =
+  let the = function
+    | None -> raise Not_found
+    | Some x -> x
+  in
+  let mapped = List.map f list in
+  let filtered = List.filter ((<>) None) mapped in
+  List.map the filtered
+
+let qmake_dispatch = function
+  | After_options ->
+    Options.make_links := false
+  | After_rules ->
+    let open Pathname in
+    rule "Link a c++ executable that uses Qt"
+      ~deps:["%.qtobjs"; "%.qtpackages"]
+      ~prod:"%.qtexec"
+      (fun env build ->
+         let dir = Pathname.dirname (env "%.qtobjs") in
+         let output = env "%.qtexec" in
+         let objlist = pwd / (env "%.qtobjs") in
+         let liblist = pwd / (env "%.qtpackages") in
+         let objs = List.map (fun o -> dir / o) (read_lines objlist) in
+         let packages = read_lines liblist in
+         let lflags = List.map (fun p -> "-l"^p) packages
+                      @ find_all "lflags" in
+         let success_builds = build (List.map (fun o -> [o]) objs) in
+         let objects = filter_map
+             (function
+               | Outcome.Good x when get_extension x = "opp" ->
+                 Some (pwd / "_build" / (update_extension "o" x))
+               | Outcome.Good _ -> None
+               | Outcome.Bad exn -> raise exn)
+             success_builds in
+         let tags_objs = tags_of_pathname (env "%.qtobjs") ++ "link" in
+         let tags_packs = tags_of_pathname (env "%.qtpackages") in
+         Cmd (S [A (find_one "cxx"); T tags_objs; T tags_packs; Command.atomize lflags;
+                 A "-o"; P output; Command.atomize objects]));                 
+    rule "Compile a cpp file into an object file \
+          using the c++ compiler path in setup.qmake.data. \
+          The ocamlbuild rule is called \".opp\" but the file has a .o extension."
+      ~dep:"%.cpp"
+      ~prod:"%.opp"
+      (fun env build ->
+         let output = env "%.o" in
+         let input = env "%.cpp" in
+         let tags = tags_of_pathname input ++ "compile" in
+         Cmd (S [A (find_one "cxx");
+                 T tags;
+                 A "-o"; P output; P input]));
+    flag ["compile"; "c_plus_plus"]
+      (S [A "-c"; Command.atomize (find_all "cflags");
+          A "-I"; P (pwd / "src" / "client_qt")]);
+    flag ["compile"; "c_plus_plus"; "include_generated"]
+      (S [A "-I"; P (pwd / "_build" / "src" / "client_qt")]);
+    rule "Generate a moc file from a hpp header using the moc path in setup.qmake.data"
+      ~prod:"%_moc.cpp"
+      ~dep:"%.hpp"
+      (fun env _build ->
+         let output = env "%_moc.cpp" in
+         let input = env "%.hpp" in
+         let tags = tags_of_pathname input ++ "gen_moc" in
+         Cmd (S [A (find_one "moc");
+                         T tags;
+                         A "-o"; P output;
+                         P (pwd / input)]));
+    rule "Generate a Qt interface from a .ui file using the uic path in setup.qmake.data"
+      ~prod:"%_ui.h"
+      ~dep:"%.ui"
+      (fun env _build ->
+         let output = env "%_ui.h" in
+         let input = env "%.ui" in
+         let tags = tags_of_pathname input ++ "gen_ui" in
+         Cmd (S [A (find_one "uic");
+                 T tags;
+                 A "-o"; P output;
+                 P (pwd / input)]));
+    rule "Generate a Qt resource from a .qrc file using the rcc path in setup.qmake.data"
+      ~prod:"%_qrc.cpp"
+      ~dep:"%.qrc"
+      (fun env _build ->
+         let output = env "%_qrc.cpp" in
+         let input = env "%.qrc" in
+         let tags = tags_of_pathname input ++ "gen_rc" in
+         Cmd (S [A (find_one "rcc");
+                 T tags;
+                 A "-o"; P output;
+                 P (pwd / input)]));
+    rule "Check if a .hpp file exists"
+      ~deps:[]
+      ~prod:"%.hpp"
+      (fun env _build ->
+         if exists (env "%.hpp") then Nop
+         else let () = Printf.eprintf "Error: cannot find header file %s.\n%!"
+                  (to_string (env "%.hpp")) in
+           let () = exit 1 in Nop);
+    rule "Check if a .cpp file exists"
+      ~deps:[]
+      ~prod:"%.cpp"
+      (fun env _build ->
+         if exists (env "%.cpp") then Nop
+         else let () = Printf.eprintf "Error: cannot find source file %s.\n%!"
+                  (to_string (env "%.cpp")) in
+           let () = exit 1 in Nop);
+    rule "Check if a .qrc file exists"
+      ~deps:[]
+      ~prod:"%.qrc"
+      (fun env _build ->
+         if exists (env "%.qrc") then Nop
+         else let () = Printf.eprintf "Error: cannot find resource file %s.\n%!"
+                  (to_string (env "%.qrc")) in
+           let () = exit 1 in Nop);
+  | _ -> ()
+
+let my_dispatch hook =
+  dispatch_default hook;
+  qmake_dispatch hook
+
+let () = Ocamlbuild_plugin.dispatch my_dispatch

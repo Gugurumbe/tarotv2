@@ -7020,8 +7020,7 @@ let setup_t =
      setup_update = false
   };;
 
-let setup () =
-  BaseSetup.setup setup_t
+let setup () = BaseSetup.setup setup_t;;
 
 # 7026 "setup.ml"
 (* OASIS_STOP *)
@@ -7125,23 +7124,41 @@ let setup_qt () =
     let qdoc = find_qt_prog "qdoc" in
     let rcc = find_qt_prog "rcc" in
     let uic = find_qt_prog "uic" in
-    let () = Printf.printf
-               "QMake configuration: \n\
-                cxx: ................................................. %s\n\
-                moc: ................................................. %s\n\
-                qdoc: ................................................ %s\n\
-                rcc: ................................................. %s\n\
-                uic: ................................................. %s\n\
-                cflags: .............................................. %s\n\
-                lflags: .............................................. %s\n%!"
-               cxx moc qdoc rcc uic
-               (Bytes.concat " "
-                  (List.map (fun path -> "-I"^path)
-                     qt_include_paths))
-               (Bytes.concat " "
-                  (List.map (fun path -> "-L"^path)
-                     qt_lib_paths))
-    in
+    let cflags = List.map (fun s -> "-I"^s) qt_include_paths in
+    let cflags = "-fPIC" :: cflags in
+    let lflags = List.map (fun s -> "-L"^s) qt_lib_paths in
+    let lflags = "-lGL" :: "-lpthread" :: lflags in
+    let () = Printf.printf "QMake configuration: \n" in
+    let chan = open_out_bin "setup.qmake.data" in
+    let output (name, value) =
+      let n_dots = 57 - String.length name in
+      let n_dots = max 0 n_dots in
+      let dots = String.make n_dots '.' in
+      let () = Printf.printf "%s: %s %s\n"
+          name dots value in
+      Printf.fprintf chan "%s=%S\n" name value in
+    let output_list (name, values) =
+      let n_dots = 57 - String.length name in
+      let n_dots = max 0 n_dots in
+      let dots = String.make n_dots '.' in
+      let escaped str = "\""^(String.escaped str)^"\"" in
+      let () = Printf.printf "%s: %s %s\n"
+          name dots (String.concat ", " values) in
+      Printf.fprintf chan "%s=%s\n"
+        name (String.concat "," (List.map escaped values)) in
+    let () = List.iter output [
+        "cxx", cxx;
+        "moc", moc;
+        "qdoc", qdoc;
+        "rcc", rcc;
+        "uic", uic
+      ] in
+    let () = List.iter output_list [
+        "cflags", cflags;
+        "lflags", lflags
+      ] in
+    let () = close_out chan in
+let () = Printf.printf "%!" in
     ()
   else ()
 

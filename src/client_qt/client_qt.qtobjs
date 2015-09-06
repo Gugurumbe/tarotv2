@@ -1,0 +1,15 @@
+config.opp
+joueur_hors_jeu_moc.opp
+joueur_hors_jeu.opp
+main.opp
+q_requests_moc.opp
+q_requests.opp
+q_value_stream_moc.opp
+q_value_stream.opp
+ressource_qrc.opp
+tarotv_moc.opp
+tarotv_ui.h
+tarotv.opp
+value.opp
+vue_jhj_moc.opp
+vue_jhj.opp
