@@ -900,17 +900,14 @@ let filter_map f list =
   List.map the filtered
 
 let qmake_dispatch = function
-  | After_options ->
-    Options.make_links := false
   | After_rules ->
     let open Pathname in
-    dep ["fake_client_qt"] ["src" / "client_qt" / "client_qt" -.- "cxxnative"];
-    rule "Link a c++ executable that uses Qt. The executable will have .byte extension."
+    rule "Link a c++ executable that uses Qt. To fool OASIS, it has extension .cxxnative.byte."
       ~deps:["%.qtobjs"; "%.qtpackages"]
-      ~prod:"%.cxxnative"
+      ~prod:"%.cxxnative.byte"
       (fun env build ->
          let dir = Pathname.dirname (env "%.qtobjs") in
-         let output = env "%.byte" in
+         let output = env "%.cxxnative.byte" in
          let objlist = pwd / (env "%.qtobjs") in
          let liblist = pwd / (env "%.qtpackages") in
          let objs = List.map (fun o -> dir / o) (read_lines objlist) in
@@ -921,7 +918,7 @@ let qmake_dispatch = function
          let objects = filter_map
              (function
                | Outcome.Good x when get_extension x = "opp" ->
-                 Some (pwd / "_build" / (update_extension "o" x))
+                 Some (pwd / "_build" /  x)
                | Outcome.Good _ -> None
                | Outcome.Bad exn -> raise exn)
              success_builds in
@@ -930,19 +927,16 @@ let qmake_dispatch = function
          Cmd (S [A (find_one "cxx"); T tags_objs; T tags_packs; Command.atomize lflags;
                  A "-o"; P output; Command.atomize objects]));                 
     rule "Compile a cpp file into an object file \
-          using the c++ compiler path in setup.qmake.data. \
-          The ocamlbuild rule is called \".opp\" but the file has a .o extension."
+          using the c++ compiler path in setup.qmake.data."
       ~dep:"%.cpp"
       ~prod:"%.opp"
       (fun env build ->
-         let output = env "%.o" in
+         let output = env "%.opp" in
          let input = env "%.cpp" in
-         if exists output then Nop
-         else
-           let tags = tags_of_pathname input ++ "compile" in
-           Cmd (S [A (find_one "cxx");
-                   T tags;
-                   A "-o"; P output; P input]));
+         let tags = tags_of_pathname input ++ "compile" in
+         Cmd (S [A (find_one "cxx");
+                 T tags;
+                 A "-o"; P output; P input]));
     flag ["compile"; "c_plus_plus"]
       (S [A "-c"; Command.atomize (find_all "cflags");
           A "-I"; P (pwd / "src" / "client_qt")]);

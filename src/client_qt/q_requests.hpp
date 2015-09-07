@@ -58,6 +58,15 @@ namespace tarotv{
       void id_transform(tarotv::protocol::value);
       void id_refused(tarotv::protocol::value);
     };
+    class logout_request: public tarotv_request{
+      Q_OBJECT
+    public:
+      logout_request(QObject * parent = 0);
+    public slots:
+      void do_request(value_socket * sock, QString id);
+    signals:
+      void logged_out();
+    };
   };
 };
 

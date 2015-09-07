@@ -238,8 +238,47 @@ QTabBar::tab:selected{
         </item>
         <item>
          <widget class="QPushButton" name="bouton_changer_serveur">
+          <property name="styleSheet">
+           <string notr="true">:checked{
+	border: 1px solid rgb(210, 255, 212);
+	border-radius: 5px;
+	padding: 0.5ex 1em;
+	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:0, stop:0 rgba(0, 94, 12, 255), stop:1 rgba(0, 29, 3, 255));
+	color: rgb(210, 255, 212);
+}
+:hover{
+	background-color: rgb(210, 255, 212);
+	color: rgb(0, 32, 0);
+}
+:pressed{
+	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:0, stop:0 rgba(0, 94, 12, 255), stop:1 rgba(0, 29, 3, 255));
+	color: rgb(210, 255, 212);
+}
+:disabled{
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 94, 12, 64), stop:1 rgba(0, 29, 3, 64));
+	border: 1px solid rgba(210, 255, 212, 64);
+	color: rgba(210, 255, 212, 64);
+	padding: 0.5ex 1em;
+}
+* {
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(94, 0, 12, 255), stop:1 rgba(29, 0, 3, 255));
+	border: 1px solid rgb(255, 210, 212);
+	color: red;
+	border-radius: 5px;
+	padding: 0.5ex 1em;
+}</string>
+          </property>
           <property name="text">
            <string>Ok</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -247,36 +286,42 @@ QTabBar::tab:selected{
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Nom d'utilisateur</string>
-       </property>
-       <property name="scaledContents">
-        <bool>false</bool>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="champ_nom"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="bouton_connexion">
-       <property name="text">
-        <string>Se connecter</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="bouton_deconnexion">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Se déconnecter</string>
-       </property>
+      <widget class="QWidget" name="conteneur_identification" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Nom d'utilisateur</string>
+          </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="champ_nom"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="bouton_connexion">
+          <property name="text">
+           <string>Se connecter</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="bouton_deconnexion">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Se déconnecter</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
@@ -413,7 +458,7 @@ QTabBar::tab:selected{
     </hint>
     <hint type="destinationlabel">
      <x>106</x>
-     <y>293</y>
+     <y>278</y>
     </hint>
    </hints>
   </connection>
@@ -425,7 +470,7 @@ QTabBar::tab:selected{
    <hints>
     <hint type="sourcelabel">
      <x>106</x>
-     <y>293</y>
+     <y>278</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -444,7 +489,7 @@ QTabBar::tab:selected{
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>399</x>
+     <x>271</x>
      <y>487</y>
     </hint>
    </hints>
@@ -456,76 +501,12 @@ QTabBar::tab:selected{
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>399</x>
+     <x>271</x>
      <y>487</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
      <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>main_window</sender>
-   <signal>auth_ok(bool)</signal>
-   <receiver>bouton_connexion</receiver>
-   <slot>setHidden(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>550</x>
-     <y>217</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>606</x>
-     <y>516</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>main_window</sender>
-   <signal>auth_ok(bool)</signal>
-   <receiver>champ_nom</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>611</x>
-     <y>150</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>694</x>
-     <y>474</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>main_window</sender>
-   <signal>auth_ok(bool)</signal>
-   <receiver>bouton_changer_serveur</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>655</x>
-     <y>174</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>718</x>
-     <y>406</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>main_window</sender>
-   <signal>auth_ok(bool)</signal>
-   <receiver>bouton_deconnexion</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>583</x>
-     <y>228</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>554</y>
     </hint>
    </hints>
   </connection>
@@ -561,8 +542,122 @@ QTabBar::tab:selected{
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>server_ok(bool)</signal>
+   <receiver>conteneur_identification</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>659</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>638</x>
+     <y>423</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>auth_ok(bool)</signal>
+   <receiver>bouton_connexion</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>515</x>
+     <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>538</x>
+     <y>503</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>auth_ok(bool)</signal>
+   <receiver>bouton_deconnexion</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>401</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>538</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bouton_changer_serveur</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>champ_adresse</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>693</x>
+     <y>400</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>663</x>
+     <y>388</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>server_ok(bool)</signal>
+   <receiver>bouton_changer_serveur</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>687</x>
+     <y>213</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>716</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>message(QString)</signal>
+   <receiver>statusbar</receiver>
+   <slot>showMessage(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>378</x>
+     <y>299</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>378</x>
+     <y>586</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>auth_ok(bool)</signal>
+   <receiver>champ_nom</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>489</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>479</x>
+     <y>479</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>auth_ok(bool)</signal>
+  <signal>server_ok(bool)</signal>
+  <signal>message(QString)</signal>
  </slots>
 </ui>

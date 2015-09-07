@@ -144,3 +144,13 @@ void id_request::id_transform(value v){
 void id_request::id_refused(tarotv::protocol::value){
   emit id_refused();
 }
+
+logout_request::logout_request(QObject * parent): tarotv_request(parent){
+  connect(this, SIGNAL(tarotv_response(tarotv::protocol::value)),
+	  this, SIGNAL(logged_out()));
+}
+void logout_request::do_request(value_socket * sock, QString id){
+  std::vector<value> args;
+  args.push_back(value::of_labelled("id", value(id.toStdString())));
+  tarotv_request::do_request(sock, "deconnecter", args);
+}

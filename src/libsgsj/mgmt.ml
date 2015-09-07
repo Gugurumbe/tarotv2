@@ -48,7 +48,7 @@ let run requete_jeu =
   let module Frontend = struct
     let print_exceptions_on_stderr () = true
     let send_exceptions () = true
-    let timeout () = 30.
+    let timeout () = 5.
   end in
   let module Protocol_eff = Protocol_sgsj.Make (Backend) (Frontend) in
   Protocol_eff.run
