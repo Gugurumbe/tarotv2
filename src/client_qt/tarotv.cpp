@@ -16,6 +16,7 @@ tarotv::ui::fenetre::fenetre(QWidget * parent):
   m_ui->liste_jhj->setModel(liste);
   m_liste_jhj << "Toto" << "Machin" << "Bidule" << "Chose" << "Truc" << "Bloups" << "Grooo";
   liste->setStringList(m_liste_jhj);
+  emit auth_ok(false);
 }
 
 tarotv::ui::fenetre::~fenetre(){
@@ -59,3 +60,12 @@ void tarotv::ui::fenetre::on_liste_jhj_selection_changed(){
   int nombre_invites = m_ui->liste_jhj->selectionModel()->selectedIndexes().size();
   m_ui->bouton_inviter->setEnabled(valider_invitation(nombre_invites));
 }
+
+#define raise_dock(action, dock)			\
+  void tarotv::ui::fenetre::on_triggered(action){	\
+    m_ui->dock->raise();			\
+  }
+
+raise_dock(action_win_listejoueurs, dock_liste_joueurs);
+raise_dock(action_win_connexion, dock_connexion);
+raise_dock(action_win_discussion, dock_discussion);

@@ -937,10 +937,12 @@ let qmake_dispatch = function
       (fun env build ->
          let output = env "%.o" in
          let input = env "%.cpp" in
-         let tags = tags_of_pathname input ++ "compile" in
-         Cmd (S [A (find_one "cxx");
-                 T tags;
-                 A "-o"; P output; P input]));
+         if exists output then Nop
+         else
+           let tags = tags_of_pathname input ++ "compile" in
+           Cmd (S [A (find_one "cxx");
+                   T tags;
+                   A "-o"; P output; P input]));
     flag ["compile"; "c_plus_plus"]
       (S [A "-c"; Command.atomize (find_all "cflags");
           A "-I"; P (pwd / "src" / "client_qt")]);
@@ -979,30 +981,6 @@ let qmake_dispatch = function
                  T tags;
                  A "-o"; P output;
                  P (pwd / input)]));
-    rule "Check if a .hpp file exists"
-      ~deps:[]
-      ~prod:"%.hpp"
-      (fun env _build ->
-         if exists (env "%.hpp") then Nop
-         else let () = Printf.eprintf "Error: cannot find header file %s.\n%!"
-                  (to_string (env "%.hpp")) in
-           let () = exit 1 in Nop);
-    rule "Check if a .cpp file exists"
-      ~deps:[]
-      ~prod:"%.cpp"
-      (fun env _build ->
-         if exists (env "%.cpp") then Nop
-         else let () = Printf.eprintf "Error: cannot find source file %s.\n%!"
-                  (to_string (env "%.cpp")) in
-           let () = exit 1 in Nop);
-    rule "Check if a .qrc file exists"
-      ~deps:[]
-      ~prod:"%.qrc"
-      (fun env _build ->
-         if exists (env "%.qrc") then Nop
-         else let () = Printf.eprintf "Error: cannot find resource file %s.\n%!"
-                  (to_string (env "%.qrc")) in
-           let () = exit 1 in Nop);
   | _ -> ()
 
 let my_dispatch hook =

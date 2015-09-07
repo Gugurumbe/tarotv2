@@ -45,6 +45,19 @@ namespace tarotv{
       void transform(tarotv::protocol::value);
       void has_refused(tarotv::protocol::value);
     };
+    class id_request: public tarotv_request{
+      Q_OBJECT
+    public:
+      id_request(QObject * parent = 0);
+    public slots:
+      void do_request(value_socket * sock, QString name);
+    signals:
+      void id_accepted(QString);
+      void id_refused();
+    private slots:
+      void id_transform(tarotv::protocol::value);
+      void id_refused(tarotv::protocol::value);
+    };
   };
 };
 

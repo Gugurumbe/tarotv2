@@ -158,7 +158,8 @@ QTabBar::tab:selected{
      <string>&amp;Fenêtres</string>
     </property>
     <addaction name="action_win_listejoueurs"/>
-    <addaction name="action_discussion"/>
+    <addaction name="action_win_discussion"/>
+    <addaction name="action_win_connexion"/>
    </widget>
    <addaction name="menuTarot_virtuel"/>
    <addaction name="menuServeur"/>
@@ -166,41 +167,6 @@ QTabBar::tab:selected{
    <addaction name="menuAide"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="dock_liste_joueurs">
-   <property name="styleSheet">
-    <string notr="true"/>
-   </property>
-   <property name="windowTitle">
-    <string>Liste des joueurs</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dock_lj_content">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="tarotv::ui::vue_jhj" name="liste_jhj">
-       <property name="editTriggers">
-        <set>QAbstractItemView::NoEditTriggers</set>
-       </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::MultiSelection</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="bouton_inviter">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>&amp;Inviter</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QDockWidget" name="dock_discussion">
    <property name="windowTitle">
     <string>Discussion</string>
@@ -242,6 +208,118 @@ QTabBar::tab:selected{
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="dock_connexion">
+   <property name="windowTitle">
+    <string>Connexion</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Adresse du serveur</string>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="widget" native="true">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLineEdit" name="champ_adresse"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="bouton_changer_serveur">
+          <property name="text">
+           <string>Ok</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Nom d'utilisateur</string>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="champ_nom"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="bouton_connexion">
+       <property name="text">
+        <string>Se connecter</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="bouton_deconnexion">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Se déconnecter</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_liste_joueurs">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Liste des joueurs</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dock_lj_content">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="tarotv::ui::vue_jhj" name="liste_jhj">
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::MultiSelection</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="bouton_inviter">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>&amp;Inviter</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="action_connexion">
    <property name="text">
     <string>Se connecter à un serveur en ligne...</string>
@@ -273,10 +351,10 @@ QTabBar::tab:selected{
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Liste des joueurs</string>
+    <string>Afficher la liste des joueurs</string>
    </property>
   </action>
-  <action name="action_discussion">
+  <action name="action_win_discussion">
    <property name="checkable">
     <bool>false</bool>
    </property>
@@ -284,7 +362,12 @@ QTabBar::tab:selected{
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Discussion</string>
+    <string>Afficher la fenêtre de discussion</string>
+   </property>
+  </action>
+  <action name="action_win_connexion">
+   <property name="text">
+    <string>Afficher la fenêtre de connexion</string>
    </property>
   </action>
  </widget>
@@ -320,7 +403,7 @@ QTabBar::tab:selected{
   </connection>
   <connection>
    <sender>action_win_listejoueurs</sender>
-   <signal>triggered(bool)</signal>
+   <signal>triggered()</signal>
    <receiver>dock_liste_joueurs</receiver>
    <slot>show()</slot>
    <hints>
@@ -351,8 +434,8 @@ QTabBar::tab:selected{
    </hints>
   </connection>
   <connection>
-   <sender>action_discussion</sender>
-   <signal>triggered(bool)</signal>
+   <sender>action_win_discussion</sender>
+   <signal>triggered()</signal>
    <receiver>dock_discussion</receiver>
    <slot>show()</slot>
    <hints>
@@ -369,7 +452,7 @@ QTabBar::tab:selected{
   <connection>
    <sender>dock_discussion</sender>
    <signal>visibilityChanged(bool)</signal>
-   <receiver>action_discussion</receiver>
+   <receiver>action_win_discussion</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -382,5 +465,104 @@ QTabBar::tab:selected{
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>auth_ok(bool)</signal>
+   <receiver>bouton_connexion</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>550</x>
+     <y>217</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>606</x>
+     <y>516</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>auth_ok(bool)</signal>
+   <receiver>champ_nom</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>611</x>
+     <y>150</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>694</x>
+     <y>474</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>auth_ok(bool)</signal>
+   <receiver>bouton_changer_serveur</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>655</x>
+     <y>174</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>718</x>
+     <y>406</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>auth_ok(bool)</signal>
+   <receiver>bouton_deconnexion</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>583</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>554</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_win_connexion</sender>
+   <signal>triggered()</signal>
+   <receiver>dock_connexion</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dock_connexion</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>action_win_connexion</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>517</x>
+     <y>436</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <signal>auth_ok(bool)</signal>
+ </slots>
 </ui>

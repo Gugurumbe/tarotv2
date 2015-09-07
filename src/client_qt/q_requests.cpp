@@ -112,3 +112,35 @@ void config_request::has_refused(tarotv::protocol::value v){
     + QString::fromStdString(v.print());
   emit error(err);
 }
+
+id_request::id_request(QObject * parent): tarotv_request(parent){
+  connect(this, SIGNAL(tarotv_response(tarotv::protocol::value)),
+	  this, SLOT(id_transform(tarotv::protocol::value)));
+  connect(this, SIGNAL(tarotv_refused(tarotv::protocol::value)),
+	  this, SLOT(id_refused(tarotv::protocol::value)));
+}
+void id_request::do_request(value_socket * sock, QString name){
+  std::vector<value> args;
+  args.push_back(value::of_labelled("nom", value(name.toStdString())));
+  tarotv_request::do_request(sock, "identifier", args);
+}
+void id_request::id_transform(value v){
+  value id; string n;
+  if(!v.to_labelled(n, id) || id.type() != value::is_string){
+    QString err = "Cannot parse id response from "
+      + QString::fromStdString(v.print()) + ".";
+    emit error(err);
+  }
+  else if(n != "id"){
+    QString err = "Cannot parse id response from "
+      + QString::fromStdString(v.print()) + ": unexpected argument '"
+      + QString::fromStdString(n) + "', expected 'id'.";
+    emit error(err);    
+  }
+  else{
+    emit id_accepted(QString::fromStdString(id.to_string()));
+  }
+}
+void id_request::id_refused(tarotv::protocol::value){
+  emit id_refused();
+}

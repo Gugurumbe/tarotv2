@@ -10,16 +10,25 @@ value_socket::value_socket(QObject * parent):
   QObject::connect(this, SIGNAL(readyRead()), this, SLOT(on_readyRead()));
   QObject::connect(this, SIGNAL(error(QAbstractSocket::SocketError)),
 		   this, SLOT(send_tcpsocket_error()));
+  connect(this, SIGNAL(connected()), this, SLOT(on_connected()));
 }
 
 value_socket::~value_socket(){
   delete m_parser;
 }
 
+void value_socket::on_connected(){
+  write(m_queue);
+  m_queue.clear();
+}
+
 void value_socket::send(const tarotv::protocol::value & v){
   std::string representation = v.print();
   QByteArray paquet(QString::fromStdString(representation).toUtf8());
-  write(paquet);
+  if(state() == QAbstractSocket::ConnectedState){
+    write(paquet);
+  }
+  else m_queue.append(paquet);
 }
 
 void value_socket::on_readyRead(){

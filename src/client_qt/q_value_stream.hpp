@@ -16,6 +16,7 @@ namespace tarotv{
     private slots:
       void on_readyRead();
       void send_tcpsocket_error();
+      void on_connected();
     signals:
       void value(tarotv::protocol::value);
       void error(QString);
@@ -24,6 +25,7 @@ namespace tarotv{
       superparser * m_parser;
       void send_value(const tarotv::protocol::value & v);
       void send_error(const QString & err);
+      QByteArray m_queue;
       class superparser: public tarotv::protocol::parser{
       public:
 	superparser(value_socket * parent):
