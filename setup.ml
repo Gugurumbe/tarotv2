@@ -7116,7 +7116,7 @@ let setup_qt () =
     let qmake_exec = which standard_paths "qmake" in
     let qmake_query = query_path_via_qmake qmake_exec in
     let qt_bin_paths =
-      try [qmake_query "QT_HOST_BINS"]
+      try [qmake_query "QT_INSTALL_BINS"]
       with _ -> standard_paths in
     let qt_include_paths =
       try
@@ -7124,7 +7124,7 @@ let setup_qt () =
         expand_directories orig_paths 1
       with _ -> standard_paths in
     let qt_lib_paths =
-      try [qmake_query "QT_HOST_LIBS"]
+      try [qmake_query "QT_INSTALL_LIBS"]
       with _ -> standard_paths in
     let possible_compilers = ["c++"; "g++"; "clang"] in
     let usable_compilers = filter_map (fun cmp -> protect
