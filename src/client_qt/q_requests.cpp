@@ -7,27 +7,28 @@ using namespace client;
 using namespace std;
 
 request::request(QObject * parent):
-  QObject(parent){
+  QObject(parent), sock(0){
 }
 
 void request::do_request(value_socket * sock, const value & v){
-  connections
-    << QObject::connect(sock, SIGNAL(value(tarotv::protocol::value)),
-			this, SIGNAL(response(tarotv::protocol::value)))
-    << QObject::connect(sock, SIGNAL(error(QString)),
-			this, SIGNAL(error(QString)))
-    << QObject::connect(sock, SIGNAL(disconnected()),
-			this, SLOT(send_disconnection_error()))
-    << QObject::connect(this, SIGNAL(response(tarotv::protocol::value)),
-			this, SLOT(disconnect_from_socket()))
-    << QObject::connect(this, SIGNAL(error(QString)),
+  this->sock = sock;
+     QObject::connect(sock, SIGNAL(value(tarotv::protocol::value)),
+			this, SIGNAL(response(tarotv::protocol::value)));
+     QObject::connect(sock, SIGNAL(error(QString)),
+			this, SIGNAL(error(QString)));
+     QObject::connect(sock, SIGNAL(disconnected()),
+			this, SLOT(send_disconnection_error()));
+     QObject::connect(this, SIGNAL(response(tarotv::protocol::value)),
+			this, SLOT(disconnect_from_socket()));
+     QObject::connect(this, SIGNAL(error(QString)),
 			this, SLOT(disconnect_from_socket()));
   sock->send(v);
 }
 
 void request::disconnect_from_socket(){
-  while(!connections.empty()){
-     QObject::disconnect(connections.takeFirst());
+  if(sock){
+    disconnect(sock, 0, this, 0);
+    sock = 0;
   }
 }
 

@@ -18,8 +18,7 @@ namespace tarotv{
     private slots:
       void disconnect_from_socket();
       void send_disconnection_error();
-    private:
-      QList<QMetaObject::Connection> connections;
+    private: value_socket * sock;
     };
     class tarotv_request: public request{
       Q_OBJECT;
