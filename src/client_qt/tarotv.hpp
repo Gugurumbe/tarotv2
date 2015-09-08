@@ -24,8 +24,11 @@ namespace tarotv{
       virtual ~fenetre();
       bool valider_invitation(int nombre_invites) const;
     public slots:
-      void ask_server_config(QHostAddress host, quint16 port);
+      void ask_server_config(QHostAddress host);
+      void login(QString);
       void on_liste_jhj_selection_changed();
+      void logout();
+      void disconnect_from_sgsj();
     private slots:
       void error_while_getting_config(QString);
       void error_while_getting_id(QString);
@@ -35,9 +38,7 @@ namespace tarotv{
       void on_triggered(action_win_listejoueurs);
       void on_triggered(action_win_discussion);
       void on_triggered(action_win_connexion);
-      void on_bouton_changer_serveur_toggled(bool);
-      void on_bouton_connexion_clicked();
-      void on_bouton_deconnexion_clicked();
+      void on_triggered(action_win_login);
       void do_update_model();
     private:
       Ui::main_window * m_ui;
@@ -45,6 +46,7 @@ namespace tarotv{
       tarotv::protocol::config game_config;
       QString m_id;
       liste_jhj * m_liste;
+      QHostAddress m_adresse;
     signals:
       void server_ok(bool);
       void auth_ok(bool);

@@ -87,5 +87,3 @@ true: annot, bin_annot
 <src/sgsj/*.ml{,i,y}>: use_libtarotv_server
 # Executable tarotv-client
 # OASIS_STOP
-<_build/src/client_qt/*>: include_generated
-<**/*.cpp>: c_plus_plus

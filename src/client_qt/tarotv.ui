@@ -25,101 +25,101 @@
   </property>
   <property name="styleSheet">
    <string notr="true">* {
-	color: rgb(210, 255, 212);
-}
-QMenuBar{
-	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 40, 5, 255), stop:1 rgba(0, 0, 0, 255));
-}
-QMenuBar::item {
-	spacing: 1em;
-	background: transparent;
-	color: rgb(210, 255, 212);
-	padding: 0.5ex 1em;
- }
-QMenuBar::item:selected, QMenu::item:selected{
-	background-color: rgb(0, 85, 0);
-}
-QMenu{
-	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 40, 5, 255), stop:1 rgba(0, 0, 0, 255));
-	color: rgb(210, 255, 212);
-}
-#action_quitter{
-	background-color: red;
-}
-#centralwidget{
-	background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.7, fx:0.5, 		fy:0.5, stop:0 rgba(0, 140, 18, 255), stop:1 rgba(0, 70, 9, 255));
-}
-#statusbar{
-	background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0.003, y2:0.0023, stop:0 rgba(0, 38, 0, 255), stop:1 rgba(0, 26, 0, 255));
-	color: white
-}
-QDockWidget *{
-	background-color: rgb(0, 32, 0);
-	color: rgb(210, 255, 212);
-}
-QDockWidget::title{
-	text-align: center;
-	background-color:black;
- }
-QDockWidget::separator, QMainWindow::separator{
-	background-color: black;
-}
-QDockWidget::separator:hover, QMainWindow::separator:hover{
-	background-color: rgb(0, 32, 0);
-}
-QListView{
-	border: 1px solid rgb(210, 255, 212);
-	alternate-background-color: rgb(0, 64, 0);
-	show-decoration-selected: 1;
-}
-QListView::item{
-	padding-left: 1em;
-	background-color: rgb(0, 32, 0);
-}
-QListView::item:selected{
-	padding-left: 1em;
-	background-color: rgb(0, 96, 0);
-}
-QPushButton{
-	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 94, 12, 255), stop:1 rgba(0, 29, 3, 255));
-	border: 1px solid rgb(210, 255, 212);
-	border-radius: 5px;
-	padding: 0.5ex 1em;
-}
-QPushButton:hover{
-	background-color: rgb(210, 255, 212);
-	color: rgb(0, 32, 0);
-}
-QPushButton:pressed{
-	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:0, stop:0 rgba(0, 94, 12, 255), stop:1 rgba(0, 29, 3, 255));
-	color: rgb(0, 32, 0);
-	color: rgb(210, 255, 212);
-}
-:disabled{
-	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 94, 12, 64), stop:1 rgba(0, 29, 3, 64));
-	border: 1px solid rgba(210, 255, 212, 64);
-	color: rgba(210, 255, 212, 64);
-	padding: 0.5ex 1em;
-}
-QTextEdit, QLineEdit{
-	border: 1px solid rgb(210, 255, 212);
-}
-QTabBar{
-	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(0, 40, 5, 255), stop:1 rgba(0, 0, 0, 255));
-}
-QTabBar::tab{
-	background-color: rgb(0, 32, 0);
-	border: 1px solid rgb(210, 255, 212);
-	padding: 0.5ex 0.5em;
-}
-QTabBar::tab:hover, QTabBar::tab:selected:hover{
-	background-color: rgb(210, 255, 212);
-	color: rgb(0, 32, 0);
-}
-QTabBar::tab:selected{
-	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 128, 0, 255), stop:1 rgba(0, 64, 0, 255));
-	color: rgb(210, 255, 212);
-}</string>
+      color: rgb(210, 255, 212);
+      }
+      QMenuBar{
+      background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 40, 5, 255), stop:1 rgba(0, 0, 0, 255));
+      }
+      QMenuBar::item {
+      spacing: 1em;
+      background: transparent;
+      color: rgb(210, 255, 212);
+      padding: 0.5ex 1em;
+      }
+      QMenuBar::item:selected, QMenu::item:selected{
+      background-color: rgb(0, 85, 0);
+      }
+      QMenu{
+      background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 40, 5, 255), stop:1 rgba(0, 0, 0, 255));
+      color: rgb(210, 255, 212);
+      }
+      #action_quitter{
+      background-color: red;
+      }
+      #centralwidget{
+      background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.7, fx:0.5, 		fy:0.5, stop:0 rgba(0, 140, 18, 255), stop:1 rgba(0, 70, 9, 255));
+      }
+      #statusbar{
+      background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0.003, y2:0.0023, stop:0 rgba(0, 38, 0, 255), stop:1 rgba(0, 26, 0, 255));
+      color: white
+      }
+      QDockWidget *{
+      background-color: rgb(0, 32, 0);
+      color: rgb(210, 255, 212);
+      }
+      QDockWidget::title{
+      text-align: center;
+      background-color:black;
+      }
+      QDockWidget::separator, QMainWindow::separator{
+      background-color: black;
+      }
+      QDockWidget::separator:hover, QMainWindow::separator:hover{
+      background-color: rgb(0, 32, 0);
+      }
+      QListView{
+      border: 1px solid rgb(210, 255, 212);
+      alternate-background-color: rgb(0, 64, 0);
+      show-decoration-selected: 1;
+      }
+      QListView::item{
+      padding-left: 1em;
+      background-color: rgb(0, 32, 0);
+      }
+      QListView::item:selected{
+      padding-left: 1em;
+      background-color: rgb(0, 96, 0);
+      }
+      QPushButton{
+      background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 94, 12, 255), stop:1 rgba(0, 29, 3, 255));
+      border: 1px solid rgb(210, 255, 212);
+      border-radius: 5px;
+      padding: 0.5ex 1em;
+      }
+      QPushButton:hover{
+      background-color: rgb(210, 255, 212);
+      color: rgb(0, 32, 0);
+      }
+      QPushButton:pressed{
+      background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:0, stop:0 rgba(0, 94, 12, 255), stop:1 rgba(0, 29, 3, 255));
+      color: rgb(0, 32, 0);
+      color: rgb(210, 255, 212);
+      }
+      :disabled{
+      background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 94, 12, 64), stop:1 rgba(0, 29, 3, 64));
+      border: 1px solid rgba(210, 255, 212, 64);
+      color: rgba(210, 255, 212, 64);
+      padding: 0.5ex 1em;
+      }
+      QTextEdit, QLineEdit{
+      border: 1px solid rgb(210, 255, 212);
+      }
+      QTabBar{
+      background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(0, 40, 5, 255), stop:1 rgba(0, 0, 0, 255));
+      }
+      QTabBar::tab{
+      background-color: rgb(0, 32, 0);
+      border: 1px solid rgb(210, 255, 212);
+      padding: 0.5ex 0.5em;
+      }
+      QTabBar::tab:hover, QTabBar::tab:selected:hover{
+      background-color: rgb(210, 255, 212);
+      color: rgb(0, 32, 0);
+      }
+      QTabBar::tab:selected{
+      background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 128, 0, 255), stop:1 rgba(0, 64, 0, 255));
+      color: rgb(210, 255, 212);
+      }</string>
   </property>
   <widget class="QWidget" name="centralwidget"/>
   <widget class="QMenuBar" name="menubar">
@@ -160,6 +160,7 @@ QTabBar::tab:selected{
     <addaction name="action_win_listejoueurs"/>
     <addaction name="action_win_discussion"/>
     <addaction name="action_win_connexion"/>
+    <addaction name="action_win_login"/>
    </widget>
    <addaction name="menuTarot_virtuel"/>
    <addaction name="menuServeur"/>
@@ -209,6 +210,9 @@ QTabBar::tab:selected{
    </widget>
   </widget>
   <widget class="QDockWidget" name="dock_connexion">
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
    <property name="windowTitle">
     <string>Connexion</string>
    </property>
@@ -218,111 +222,7 @@ QTabBar::tab:selected{
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Adresse du serveur</string>
-       </property>
-       <property name="scaledContents">
-        <bool>false</bool>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QWidget" name="widget" native="true">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLineEdit" name="champ_adresse"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="bouton_changer_serveur">
-          <property name="styleSheet">
-           <string notr="true">:checked{
-	border: 1px solid rgb(210, 255, 212);
-	border-radius: 5px;
-	padding: 0.5ex 1em;
-	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:0, stop:0 rgba(0, 94, 12, 255), stop:1 rgba(0, 29, 3, 255));
-	color: rgb(210, 255, 212);
-}
-:hover{
-	background-color: rgb(210, 255, 212);
-	color: rgb(0, 32, 0);
-}
-:pressed{
-	background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:0, stop:0 rgba(0, 94, 12, 255), stop:1 rgba(0, 29, 3, 255));
-	color: rgb(210, 255, 212);
-}
-:disabled{
-	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 94, 12, 64), stop:1 rgba(0, 29, 3, 64));
-	border: 1px solid rgba(210, 255, 212, 64);
-	color: rgba(210, 255, 212, 64);
-	padding: 0.5ex 1em;
-}
-* {
-	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(94, 0, 12, 255), stop:1 rgba(29, 0, 3, 255));
-	border: 1px solid rgb(255, 210, 212);
-	color: red;
-	border-radius: 5px;
-	padding: 0.5ex 1em;
-}</string>
-          </property>
-          <property name="text">
-           <string>Ok</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QWidget" name="conteneur_identification" native="true">
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Nom d'utilisateur</string>
-          </property>
-          <property name="scaledContents">
-           <bool>false</bool>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="champ_nom"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="bouton_connexion">
-          <property name="text">
-           <string>Se connecter</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="bouton_deconnexion">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>Se déconnecter</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <widget class="tarotv::ui::dock_connexion" name="contenu_dock_connexion" native="true"/>
      </item>
     </layout>
    </widget>
@@ -361,6 +261,24 @@ QTabBar::tab:selected{
         <string>&amp;Inviter</string>
        </property>
       </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_login">
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Login</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="tarotv::ui::dock_login" name="contenu_dock_login" native="true"/>
      </item>
     </layout>
    </widget>
@@ -415,6 +333,11 @@ QTabBar::tab:selected{
     <string>Afficher la fenêtre de connexion</string>
    </property>
   </action>
+  <action name="action_win_login">
+   <property name="text">
+    <string>Afficher la fenêtre de login</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -424,6 +347,18 @@ QTabBar::tab:selected{
    <slots>
     <signal>selection_changed()</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>tarotv::ui::dock_connexion</class>
+   <extends>QWidget</extends>
+   <header>dock_connexion.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>tarotv::ui::dock_login</class>
+   <extends>QWidget</extends>
+   <header>dock_login.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
@@ -544,86 +479,6 @@ QTabBar::tab:selected{
   </connection>
   <connection>
    <sender>main_window</sender>
-   <signal>server_ok(bool)</signal>
-   <receiver>conteneur_identification</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>659</x>
-     <y>111</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>638</x>
-     <y>423</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>main_window</sender>
-   <signal>auth_ok(bool)</signal>
-   <receiver>bouton_connexion</receiver>
-   <slot>setHidden(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>515</x>
-     <y>118</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>538</x>
-     <y>503</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>main_window</sender>
-   <signal>auth_ok(bool)</signal>
-   <receiver>bouton_deconnexion</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>401</x>
-     <y>136</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>420</x>
-     <y>538</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>bouton_changer_serveur</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>champ_adresse</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>693</x>
-     <y>400</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>663</x>
-     <y>388</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>main_window</sender>
-   <signal>server_ok(bool)</signal>
-   <receiver>bouton_changer_serveur</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>687</x>
-     <y>213</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>716</x>
-     <y>389</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>main_window</sender>
    <signal>message(QString)</signal>
    <receiver>statusbar</receiver>
    <slot>showMessage(QString)</slot>
@@ -639,18 +494,34 @@ QTabBar::tab:selected{
    </hints>
   </connection>
   <connection>
-   <sender>main_window</sender>
-   <signal>auth_ok(bool)</signal>
-   <receiver>champ_nom</receiver>
+   <sender>action_win_login</sender>
+   <signal>triggered()</signal>
+   <receiver>dock_login</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>681</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dock_login</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>action_win_login</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>489</x>
-     <y>171</y>
+     <x>681</x>
+     <y>436</y>
     </hint>
     <hint type="destinationlabel">
-     <x>479</x>
-     <y>479</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
    </hints>
   </connection>

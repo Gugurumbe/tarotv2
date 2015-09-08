@@ -7133,7 +7133,7 @@ let setup_qt () =
           Printf.eprintf
             "Could not find any c++ compilers (tried to find one of [%s] in path). \
              Please do some ln -s and/or update your path.\n%!"
-            (Bytes.concat ", " possible_compilers) in
+            (String.concat ", " possible_compilers) in
         exit 1
       | a :: _ -> a
     in

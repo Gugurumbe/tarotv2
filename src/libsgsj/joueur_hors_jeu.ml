@@ -150,7 +150,9 @@ module Make (Database:DATABASE) (Arbitre:ARBITRE) (Timeout:TIMEOUT): Joueur_hors
     } in
     let () = Lwt.async (fun () ->
         Timeout.attendre nouveau.timeout >>= fun () ->
-        deconnecter id) in
+        Lwt.catch
+          (fun () -> deconnecter id)
+          (fun _ -> Lwt.return ())) in
     Database.add db id nouveau;
     return id
   let nouveau nom = with_mutex (fun () -> nouveau_unsafe nom)

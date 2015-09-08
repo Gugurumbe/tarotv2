@@ -935,13 +935,9 @@ let qmake_dispatch = function
          let input = env "%.cpp" in
          let tags = tags_of_pathname input ++ "compile" in
          Cmd (S [A (find_one "cxx");
-                 T tags;
+                 T tags; Command.atomize (find_all "cflags");
+                 A "-c"; A "-I"; P (dirname (env "%")); A "-I"; P (dirname (pwd / (env "%")));
                  A "-o"; P output; P input]));
-    flag ["compile"; "c_plus_plus"]
-      (S [A "-c"; Command.atomize (find_all "cflags");
-          A "-I"; P (pwd / "src" / "client_qt")]);
-    flag ["compile"; "c_plus_plus"; "include_generated"]
-      (S [A "-I"; P (pwd / "_build" / "src" / "client_qt")]);
     rule "Generate a moc file from a hpp header using the moc path in setup.qmake.data"
       ~prod:"%_moc.cpp"
       ~dep:"%.hpp"
