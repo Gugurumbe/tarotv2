@@ -154,3 +154,149 @@ void logout_request::do_request(value_socket * sock, QString id){
   args.push_back(value::of_labelled("id", value(id.toStdString())));
   tarotv_request::do_request(sock, "deconnecter", args);
 }
+
+peek_request::peek_request(QObject * parent): tarotv_request(parent){
+  connect(this, SIGNAL(tarotv_response(tarotv::protocol::value)),
+	  this, SLOT(peek_transform(tarotv::protocol::value)));
+  connect(this, SIGNAL(tarotv_refused(tarotv::protocol::value)),
+	  this, SLOT(peek_refused(tarotv::protocol::value)));
+}
+void peek_request::do_request(value_socket * sock, QString id){
+  std::vector<value> args;
+  args.push_back(value::of_labelled("id", value(id.toStdString())));
+  tarotv_request::do_request(sock, "peek_message", args);
+}
+void peek_request::peek_transform(tarotv::protocol::value v){
+  string label; value rep;
+  if(!v.to_labelled(label, rep)){
+    QString err = "Cannot parse peek response from "
+      + QString::fromStdString(v.print()) + ".";
+    emit error(err);
+  }
+  else{
+    try{
+      message msg = get_message(v);
+      emit has_message(msg);
+    }
+    catch(invalid_message_structure i){
+      QString err = "Cannot parse peek response from "
+	+ QString::fromStdString(v.print()) + ". "
+	+ QString::fromStdString(i.what());
+      emit error(err);
+    }
+  }
+}
+void peek_request::peek_refused(tarotv::protocol::value v){
+  QString err = "Peek request has been refused: "
+    + QString::fromStdString(v.print());
+  emit error(err);
+}
+
+pop_request::pop_request(QObject * parent): tarotv_request(parent){
+  connect(this, SIGNAL(tarotv_response(tarotv::protocol::value)),
+	  this, SIGNAL(ok()));
+}
+void pop_request::do_request(value_socket * sock, QString id){
+  std::vector<value> args;
+  args.push_back(value::of_labelled("id", value(id.toStdString())));
+  tarotv_request::do_request(sock, "next_message", args);
+}
+
+msg_request::msg_request(QObject * parent): tarotv_request(parent){
+  connect(this, SIGNAL(tarotv_response(tarotv::protocol::value)),
+	  this, SIGNAL(ok()));
+  connect(this, SIGNAL(tarotv_refused(tarotv::protocol::value)),
+	  this, SIGNAL(too_chatty()));
+}
+void msg_request::do_request(value_socket * sock, QString id, QString message){
+  std::vector<value> args;
+  args.push_back(value::of_labelled("id", value(id.toStdString())));
+  args.push_back(value::of_labelled("message", value(id.toStdString())));
+  tarotv_request::do_request(sock, "dire", args);
+}
+
+inv_request::inv_request(QObject * parent): tarotv_request(parent){
+  connect(this, SIGNAL(tarotv_response(tarotv::protocol::value)),
+	  this, SIGNAL(ok()));
+  connect(this, SIGNAL(tarotv_refused(tarotv::protocol::value)),
+	  this, SIGNAL(invalid()));
+}
+void inv_request::do_request(value_socket * sock, QString id, QStringList invites,
+			     QMap<QString, value> parametres){
+  std::vector<value> args;
+  std::map<std::string, value> p;
+  for(QMap<QString, value>::Iterator i = parametres.begin();
+      i != parametres.end(); i++){
+    p.insert(std::pair<std::string, value>(i.key().toStdString(), i.value()));
+  }
+  std::vector<value> i;
+  for(QStringList::Iterator j = invites.begin(); j != invites.end(); j++){
+    i.push_back(value(j->toStdString()));
+  }
+  args.push_back(value::of_labelled("invites", value(i)));
+  args.push_back(value::of_labelled("id", value(id.toStdString())));
+  args.push_back(value::of_labelled("parametre", value::of_table(p)));
+  tarotv_request::do_request(sock, "inviter", args);
+}
+
+cancel_inv_request::cancel_inv_request(QObject * parent): tarotv_request(parent){
+  connect(this, SIGNAL(tarotv_response(tarotv::protocol::value)),
+	  this, SIGNAL(ok()));
+  connect(this, SIGNAL(tarotv_refused(tarotv::protocol::value)),
+	  this, SIGNAL(invalid()));
+}
+void cancel_inv_request::do_request(value_socket * sock, QString id){
+  std::vector<value> args;
+  args.push_back(value::of_labelled("id", value(id.toStdString())));
+  tarotv_request::do_request(sock, "annuer_invitation", args);
+}
+
+msg_bus::msg_bus(const QHostAddress & addr, const QString & id, QObject * parent):
+  QObject(parent),
+  m_running(false),
+  m_addr(addr),
+  m_id(id){
+}
+
+void msg_bus::run(){
+  if(!m_running){    
+    m_running = true;
+    value_socket * sock = new value_socket();
+    QObject::connect(sock, SIGNAL(disconnected()), sock, SLOT(deleteLater()));
+    sock->connectToHost(m_addr, 45678);
+    peek_request * req = new peek_request(sock);
+
+    QObject::connect(req, SIGNAL(has_message(tarotv::protocol::message)),
+		     this, SIGNAL(has_message(tarotv::protocol::message)));
+    QObject::connect(req, SIGNAL(has_message(tarotv::protocol::message)),
+		     this, SLOT(should_pop()));
+    QObject::connect(req, SIGNAL(error(QString)), this, SLOT(set_idle(QString)));
+    
+    req->do_request(sock, m_id);
+  }
+}
+
+void msg_bus::should_pop(){
+  if(m_running){    
+    m_running = false;
+    value_socket * sock = new value_socket();
+    QObject::connect(sock, SIGNAL(disconnected()), sock, SLOT(deleteLater()));
+    sock->connectToHost(m_addr, 45678);
+    pop_request * req = new pop_request(sock);
+
+    QObject::connect(req, SIGNAL(ok()), this, SLOT(run()));
+    QObject::connect(req, SIGNAL(error(QString)), this, SIGNAL(end(QString)));
+    
+    req->do_request(sock, m_id);
+  }
+}
+
+void msg_bus::set_idle(QString why){
+  m_running = false;
+  if(why == "The remote host closed the connection"){
+    run();
+  }
+  else {
+    emit end(why);
+  }
+}

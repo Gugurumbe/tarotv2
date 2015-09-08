@@ -7,6 +7,8 @@
 #include <QHostAddress>
 
 #include "config.hpp"
+#include "messages.hpp"
+#include "q_requests.hpp"
 #include "joueur_hors_jeu.hpp"
 
 #define on_triggered(action) on_##action##_triggered()
@@ -40,6 +42,9 @@ namespace tarotv{
       void on_triggered(action_win_connexion);
       void on_triggered(action_win_login);
       void do_update_model();
+      void has_message(tarotv::protocol::message);
+      void run_bus();
+      void end_of_bus(QString);
     private:
       Ui::main_window * m_ui;
       QStringList m_liste_jhj;
@@ -47,6 +52,7 @@ namespace tarotv{
       QString m_id;
       liste_jhj * m_liste;
       QHostAddress m_adresse;
+      client::msg_bus * m_bus;
     signals:
       void server_ok(bool);
       void auth_ok(bool);

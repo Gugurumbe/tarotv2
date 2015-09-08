@@ -24,9 +24,13 @@ module Make (Backend:BACKEND) (Frontend:FRONTEND) = struct
   module Jhj = Joueur_hors_jeu.Make (Database) (Arbitre_eff) (Timeout)
   let of_message = function
     | Jhj.Nouveau_joueur nom ->
-      Value.of_labelled "Nouveau_joueur" (Value.of_string nom)
+      let table = Hashtbl.create 1 in
+      let () = Hashtbl.add table "joueur" (Value.of_string nom) in
+      Value.of_labelled "Nouveau_joueur" (Value.of_table table)
     | Jhj.Depart_joueur nom ->
-      Value.of_labelled "Depart_joueur" (Value.of_string nom)
+      let table = Hashtbl.create 1 in
+      let () = Hashtbl.add table "joueur" (Value.of_string nom) in
+      Value.of_labelled "Depart_joueur" (Value.of_table table)
     | Jhj.Invitation (None, gus) ->
       let table = Hashtbl.create 1 in
       let () = Hashtbl.add table "joueur" (Value.of_string gus) in

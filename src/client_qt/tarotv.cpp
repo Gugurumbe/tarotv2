@@ -13,7 +13,8 @@ using namespace tarotv::ui;
 fenetre::fenetre(QWidget * parent):
   QMainWindow(parent),
   m_ui(new Ui::main_window),
-  m_liste(new liste_jhj(this)){
+  m_liste(new liste_jhj(this)),
+  m_bus(0){
   m_ui->setupUi(this);
   m_ui->liste_jhj->setModel(m_liste);
   QObject::connect(this, SIGNAL(update_model()), this, SLOT(do_update_model()));
@@ -143,12 +144,17 @@ void fenetre::set_id(QString id){
   m_id = id;
   emit message(tr("Vous êtes authentifié : ") + id);
   emit auth_ok(true);
+  run_bus();
 }
 void fenetre::auth_refused(){
   emit message(tr("Authentification échouée."));
   emit auth_ok(false);
 }
 void fenetre::logout(){
+  if(m_bus){
+    delete m_bus;
+    m_bus = 0;
+  }
   value_socket * sock = new value_socket();
   QObject::connect(sock, SIGNAL(disconnected()), sock, SLOT(deleteLater()));
   sock->connectToHost(m_adresse, 45678);
@@ -160,4 +166,22 @@ void fenetre::logout(){
 void fenetre::disconnect_from_sgsj(){
   logout();
   emit server_ok(false);
+}
+void fenetre::has_message(tarotv::protocol::message _){
+  qDebug()<<"Nouveau message !";
+}
+void fenetre::run_bus(){
+  if(m_bus){
+    delete m_bus;
+    m_bus = 0;
+  }
+  m_bus = new msg_bus(m_adresse, m_id, this);
+  QObject::connect(m_bus, SIGNAL(has_message(tarotv::protocol::message)),
+		   this, SLOT(has_message(tarotv::protocol::message)));
+  QObject::connect(m_bus, SIGNAL(end(QString)),
+		   this, SLOT(end_of_bus(QString)));
+  m_bus->run();
+}
+void fenetre::end_of_bus(QString why){
+  qDebug()<<"Le bus a terminé : "<<why;
 }
