@@ -1,3 +1,4 @@
+// -*- compile-command: "cd ../../ && make -j 5" -*-
 #ifndef DOCK_LOGIN_DEFINI
 #define DOCK_LOGIN_DEFINI
 

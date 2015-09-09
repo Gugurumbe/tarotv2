@@ -1,3 +1,4 @@
+(* -*- compile-command: "cd ../../ && make -j 5" -*- *)
 module type BACKEND = sig
   val requete: Value.t Lwt_stream.t -> Value.t Lwt_stream.t
 end

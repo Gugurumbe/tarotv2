@@ -1,8 +1,9 @@
+uis.otarget
 config.opp
-dock_connexion_ui.h
 dock_connexion_moc.opp
 dock_connexion.opp
-dock_login_ui.h
+dock_discussion_moc.opp
+dock_discussion.opp
 dock_login_moc.opp
 dock_login.opp
 joueur_hors_jeu_moc.opp
@@ -15,7 +16,6 @@ q_value_stream_moc.opp
 q_value_stream.opp
 ressource_qrc.opp
 tarotv_moc.opp
-tarotv_ui.h
 tarotv.opp
 value.opp
 vue_jhj_moc.opp

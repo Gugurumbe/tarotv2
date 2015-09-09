@@ -1,8 +1,10 @@
+// -*- compile-command: "cd ../../ && make -j 5" -*-
 #include "tarotv.hpp"
 #include "tarotv_ui.h"
 #include "q_requests.hpp"
 #include "dock_connexion.hpp"
 #include "dock_login.hpp"
+#include "dock_discussion.hpp"
 #include <iostream>
 #include <QDebug>
 
@@ -16,29 +18,7 @@ fenetre::fenetre(QWidget * parent):
   m_liste(new liste_jhj(this)),
   m_bus(0){
   m_ui->setupUi(this);
-  m_ui->liste_jhj->setModel(m_liste);
-  QObject::connect(this, SIGNAL(update_model()), this, SLOT(do_update_model()));
-  
-  QObject::connect(this, SIGNAL(server_ok(bool)),
-		   m_ui->contenu_dock_connexion, SLOT(interdire_changement(bool)));
-  QObject::connect(this, SIGNAL(server_ok(bool)),
-		   m_ui->contenu_dock_connexion, SLOT(est_connecte(bool)));
-  QObject::connect(m_ui->contenu_dock_connexion, SIGNAL(connexion_demandee(QHostAddress)),
-		   this, SLOT(ask_server_config(QHostAddress)));
-  QObject::connect(m_ui->contenu_dock_connexion, SIGNAL(deconnexion_demandee()),
-		   this, SLOT(disconnect_from_sgsj()));
-  
-  QObject::connect(this, SIGNAL(auth_ok(bool)),
-		   m_ui->contenu_dock_login, SLOT(interdire_changement(bool)));
-  QObject::connect(this, SIGNAL(server_ok(bool)),
-		   m_ui->contenu_dock_login, SLOT(est_connecte(bool)));
-  QObject::connect(this, SIGNAL(auth_ok(bool)),
-		   m_ui->contenu_dock_login, SLOT(est_identifie(bool)));
-  QObject::connect(m_ui->contenu_dock_login, SIGNAL(login_demande(QString)),
-		   this, SLOT(login(QString)));
-  QObject::connect(m_ui->contenu_dock_login, SIGNAL(logout_demande()),
-		   this, SLOT(logout()));
-  
+  //m_ui->liste_jhj->setModel(m_liste);  
   emit server_ok(false); emit auth_ok(false); emit message("Bienvenue.");
 }
 
@@ -118,27 +98,6 @@ bool fenetre::valider_invitation(int nombre_invites) const{
        && ((nombre_invites - i->second.u.as_int.min)
 	   % i->second.u.as_int.incr == 0));
 }
-void fenetre::on_liste_jhj_selection_changed(){
-  int nombre_invites = m_ui->liste_jhj->selectionModel()->selectedIndexes().size();
-  bool ok = valider_invitation(nombre_invites);
-  if(ok){
-    emit message(tr("Vous pouvez inviter ces personnes."));
-  }
-  else{
-    emit message(tr("Vous ne pouvez pas inviter ces personnes."));
-  }
-  m_ui->bouton_inviter->setEnabled(ok);
-}
-
-#define raise_dock(action, dock)			\
-  void fenetre::on_triggered(action){	\
-    m_ui->dock->raise();			\
-  }
-
-raise_dock(action_win_listejoueurs, dock_liste_joueurs);
-raise_dock(action_win_connexion, dock_connexion);
-raise_dock(action_win_discussion, dock_discussion);
-raise_dock(action_win_login, dock_login);
 
 void fenetre::set_id(QString id){
   m_id = id;
@@ -167,8 +126,48 @@ void fenetre::disconnect_from_sgsj(){
   logout();
   emit server_ok(false);
 }
-void fenetre::has_message(tarotv::protocol::message _){
-  qDebug()<<"Nouveau message !";
+void fenetre::has_message(tarotv::protocol::message msg){
+  std::map<std::string, tarotv::protocol::value>::const_iterator i;
+  std::vector<std::string>::const_iterator j;
+  QMap<QString, tarotv::protocol::value> inv;
+  QStringList invites;
+  switch(msg.t){
+  case is_nouveau_joueur:
+    emit message(tr("Entrée de ") + QString::fromStdString(msg.nouveau_joueur.nom) + tr(" !"));
+    emit nouveau_joueur(QString::fromStdString(msg.nouveau_joueur.nom));
+    break;
+  case is_depart_joueur:
+    emit message(tr("Départ de ") + QString::fromStdString(msg.depart_joueur.nom) + tr(" !"));
+    emit depart_joueur(QString::fromStdString(msg.depart_joueur.nom));
+    break;
+  case is_invitation_annulee:
+    emit message(QString::fromStdString(msg.invitation_annulee.responsable)
+		 + tr(" annule son invitation !"));
+    emit invitation_annulee(QString::fromStdString(msg.invitation_annulee.responsable));
+    break;
+  case is_invitation:
+    for(i = msg.invitation.parametres.begin(); i != msg.invitation.parametres.end(); i++){
+      inv[QString::fromStdString(i->first)] = i->second;
+    }
+    for(j = msg.invitation.invites.begin(); j != msg.invitation.invites.end(); j++){
+      invites << QString::fromStdString(*j);
+    }
+    if(invites.contains(m_nom)){
+      emit message(tr("Vous êtes invité par ") + QString::fromStdString(msg.invitation.joueur)
+		   + tr(" !"));
+    }
+    emit invitation(QString::fromStdString(msg.invitation.joueur), invites, inv);
+    break;
+  case is_text:
+    if(QString::fromStdString(msg.text.joueur) == m_nom){
+      emit message(tr("Message envoyé !"));
+    }
+    else
+      emit message(tr("Message de ") + QString::fromStdString(msg.text.joueur) + tr(" !"));
+    emit nouveau_message(QString::fromStdString(msg.text.joueur),
+			 QString::fromStdString(msg.text.contenu));
+    break;
+  }
 }
 void fenetre::run_bus(){
   if(m_bus){
@@ -184,4 +183,16 @@ void fenetre::run_bus(){
 }
 void fenetre::end_of_bus(QString why){
   qDebug()<<"Le bus a terminé : "<<why;
+}
+void fenetre::send_message(QString msg){
+  value_socket * sock = new value_socket();
+  QObject::connect(sock, SIGNAL(disconnected()), sock, SLOT(deleteLater()));
+  sock->connectToHost(m_adresse, 45678);
+  msg_request * req = new msg_request(sock);
+  QObject::connect(req, SIGNAL(too_chatty()),
+  		   this, SIGNAL(trop_bavard()));
+  QObject::connect(req, SIGNAL(error(QString)),
+  		   this, SIGNAL(trop_bavard())); // Discutable.
+  req->do_request(sock, m_id, msg);
+  emit message(tr("Envoi d'un message..."));
 }

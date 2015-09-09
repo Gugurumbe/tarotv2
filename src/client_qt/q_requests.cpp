@@ -1,3 +1,4 @@
+// -*- compile-command: "cd ../../ && make -j 5" -*-
 #include "q_requests.hpp"
 #include <QString>
 
@@ -211,7 +212,7 @@ msg_request::msg_request(QObject * parent): tarotv_request(parent){
 void msg_request::do_request(value_socket * sock, QString id, QString message){
   std::vector<value> args;
   args.push_back(value::of_labelled("id", value(id.toStdString())));
-  args.push_back(value::of_labelled("message", value(id.toStdString())));
+  args.push_back(value::of_labelled("message", value(message.toStdString())));
   tarotv_request::do_request(sock, "dire", args);
 }
 

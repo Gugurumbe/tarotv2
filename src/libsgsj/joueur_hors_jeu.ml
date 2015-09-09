@@ -1,3 +1,4 @@
+(* -*- compile-command: "cd ../../ && make -j 5" -*- *)
 module type ARBITRE = sig
   val accepter_identification: Bytes.t -> bool Lwt.t (* Sous réserve qu'il n'est pas déjà pris *)
   val accepter_invitation: int -> Value.t -> bool Lwt.t

@@ -153,132 +153,83 @@
     </property>
     <addaction name="action_quitter"/>
    </widget>
-   <widget class="QMenu" name="menuFen_tres">
-    <property name="title">
-     <string>&amp;Fenêtres</string>
-    </property>
-    <addaction name="action_win_listejoueurs"/>
-    <addaction name="action_win_discussion"/>
-    <addaction name="action_win_connexion"/>
-    <addaction name="action_win_login"/>
-   </widget>
    <addaction name="menuTarot_virtuel"/>
    <addaction name="menuServeur"/>
-   <addaction name="menuFen_tres"/>
    <addaction name="menuAide"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="dock_discussion">
-   <property name="windowTitle">
-    <string>Discussion</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QTextEdit" name="textEdit">
-       <property name="undoRedoEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QWidget" name="cont_boutons" native="true">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLineEdit" name="lineEdit"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="bouton_envoyer">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Envoyer</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dock_connexion">
+  <widget class="QDockWidget" name="dock_toolbox">
    <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="windowTitle">
-    <string>Connexion</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QVBoxLayout" name="verticalLayout_3">
-     <item>
-      <widget class="tarotv::ui::dock_connexion" name="contenu_dock_connexion" native="true"/>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dock_liste_joueurs">
-   <property name="styleSheet">
-    <string notr="true"/>
-   </property>
-   <property name="floating">
-    <bool>false</bool>
-   </property>
-   <property name="windowTitle">
-    <string>Liste des joueurs</string>
+    <string>Tarot Virtuel</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dock_lj_content">
-    <layout class="QVBoxLayout" name="verticalLayout">
+   <widget class="QWidget" name="dockWidgetContents_4">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="tarotv::ui::vue_jhj" name="liste_jhj">
-       <property name="editTriggers">
-        <set>QAbstractItemView::NoEditTriggers</set>
+      <widget class="QToolBox" name="toolBox">
+       <property name="currentIndex">
+        <number>0</number>
        </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::MultiSelection</enum>
-       </property>
+       <widget class="QWidget" name="page_connexion">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>250</width>
+          <height>387</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Connexion</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="tarotv::ui::dock_connexion" name="contenu_dock_connexion" native="true"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_login">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>250</width>
+          <height>387</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Identification</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="tarotv::ui::dock_login" name="contenu_dock_login" native="true"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_discussion">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>250</width>
+          <height>387</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Discussion</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="tarotv::ui::dock_discussion" name="contenu_dock_discussion" native="true"/>
+         </item>
+        </layout>
+       </widget>
       </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="bouton_inviter">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>&amp;Inviter</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dock_login">
-   <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
-   </property>
-   <property name="windowTitle">
-    <string>Login</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="tarotv::ui::dock_login" name="contenu_dock_login" native="true"/>
      </item>
     </layout>
    </widget>
@@ -341,24 +292,51 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>tarotv::ui::vue_jhj</class>
-   <extends>QListView</extends>
-   <header>vue_jhj.hpp</header>
-   <slots>
-    <signal>selection_changed()</signal>
-   </slots>
-  </customwidget>
-  <customwidget>
    <class>tarotv::ui::dock_connexion</class>
    <extends>QWidget</extends>
    <header>dock_connexion.hpp</header>
    <container>1</container>
+   <slots>
+    <signal>connexion_demandee(QHostAddress)</signal>
+    <signal>deconnexion_demandee()</signal>
+    <slot>autoriser_changement(bool)</slot>
+    <slot>interdire_changement(bool)</slot>
+    <slot>est_connecte(bool)</slot>
+    <slot>connexion_reussie(tarotv::protocol::config)</slot>
+    <slot>echec_connexion(QString)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>tarotv::ui::dock_login</class>
    <extends>QWidget</extends>
    <header>dock_login.hpp</header>
    <container>1</container>
+   <slots>
+    <signal>login_demande(QString)</signal>
+    <signal>logout_demande()</signal>
+    <slot>autoriser_changement(bool)</slot>
+    <slot>interdire_changement(bool)</slot>
+    <slot>est_connecte(bool)</slot>
+    <slot>est_identifie(bool)</slot>
+    <slot>login_reussi(QString)</slot>
+    <slot>echec_login()</slot>
+    <slot>erreur(QString)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>tarotv::ui::dock_discussion</class>
+   <extends>QWidget</extends>
+   <header>dock_discussion.hpp</header>
+   <container>1</container>
+   <slots>
+    <signal>message_demande(QString)</signal>
+    <slot>autoriser_discussion(bool)</slot>
+    <slot>interdire_discussion(bool)</slot>
+    <slot>message(QString,QString)</slot>
+    <slot>trop_bavard()</slot>
+    <slot>nouveau_joueur(QString)</slot>
+    <slot>depart_joueur(QString)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources>
@@ -382,102 +360,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>action_win_listejoueurs</sender>
-   <signal>triggered()</signal>
-   <receiver>dock_liste_joueurs</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>106</x>
-     <y>278</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dock_liste_joueurs</sender>
-   <signal>visibilityChanged(bool)</signal>
-   <receiver>action_win_listejoueurs</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>106</x>
-     <y>278</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>action_win_discussion</sender>
-   <signal>triggered()</signal>
-   <receiver>dock_discussion</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>271</x>
-     <y>487</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dock_discussion</sender>
-   <signal>visibilityChanged(bool)</signal>
-   <receiver>action_win_discussion</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>271</x>
-     <y>487</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>action_win_connexion</sender>
-   <signal>triggered()</signal>
-   <receiver>dock_connexion</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>517</x>
-     <y>436</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dock_connexion</sender>
-   <signal>visibilityChanged(bool)</signal>
-   <receiver>action_win_connexion</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>517</x>
-     <y>436</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>main_window</sender>
    <signal>message(QString)</signal>
    <receiver>statusbar</receiver>
@@ -494,34 +376,258 @@
    </hints>
   </connection>
   <connection>
-   <sender>action_win_login</sender>
-   <signal>triggered()</signal>
-   <receiver>dock_login</receiver>
-   <slot>show()</slot>
+   <sender>main_window</sender>
+   <signal>update_model()</signal>
+   <receiver>main_window</receiver>
+   <slot>do_update_model()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
+     <x>500</x>
+     <y>206</y>
     </hint>
     <hint type="destinationlabel">
-     <x>681</x>
-     <y>436</y>
+     <x>505</x>
+     <y>220</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>dock_login</sender>
-   <signal>visibilityChanged(bool)</signal>
-   <receiver>action_win_login</receiver>
-   <slot>setDisabled(bool)</slot>
+   <sender>main_window</sender>
+   <signal>server_ok(bool)</signal>
+   <receiver>contenu_dock_connexion</receiver>
+   <slot>interdire_changement(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>681</x>
-     <y>436</y>
+     <x>532</x>
+     <y>264</y>
     </hint>
     <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
+     <x>164</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>server_ok(bool)</signal>
+   <receiver>contenu_dock_connexion</receiver>
+   <slot>est_connecte(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>532</x>
+     <y>301</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>188</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contenu_dock_connexion</sender>
+   <signal>connexion_demandee(QHostAddress)</signal>
+   <receiver>main_window</receiver>
+   <slot>ask_server_config(QHostAddress)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>162</x>
+     <y>380</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>495</x>
+     <y>347</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contenu_dock_connexion</sender>
+   <signal>deconnexion_demandee()</signal>
+   <receiver>main_window</receiver>
+   <slot>disconnect_from_sgsj()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>167</x>
+     <y>431</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>472</x>
+     <y>437</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>auth_ok(bool)</signal>
+   <receiver>contenu_dock_login</receiver>
+   <slot>interdire_changement(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>434</x>
+     <y>284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>284</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>server_ok(bool)</signal>
+   <receiver>contenu_dock_login</receiver>
+   <slot>est_connecte(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>433</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>174</x>
+     <y>328</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>auth_ok(bool)</signal>
+   <receiver>contenu_dock_login</receiver>
+   <slot>est_identifie(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>470</x>
+     <y>383</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>208</x>
+     <y>386</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contenu_dock_login</sender>
+   <signal>login_demande(QString)</signal>
+   <receiver>main_window</receiver>
+   <slot>login(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>138</x>
+     <y>430</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>421</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contenu_dock_login</sender>
+   <signal>logout_demande()</signal>
+   <receiver>main_window</receiver>
+   <slot>logout()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>140</x>
+     <y>479</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>486</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>auth_ok(bool)</signal>
+   <receiver>contenu_dock_discussion</receiver>
+   <slot>autoriser_discussion(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>226</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>217</x>
+     <y>249</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>nouveau_message(QString,QString)</signal>
+   <receiver>contenu_dock_discussion</receiver>
+   <slot>message(QString,QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>435</x>
+     <y>296</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>173</x>
+     <y>293</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>nouveau_joueur(QString)</signal>
+   <receiver>contenu_dock_discussion</receiver>
+   <slot>nouveau_joueur(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>444</x>
+     <y>353</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>174</x>
+     <y>329</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>depart_joueur(QString)</signal>
+   <receiver>contenu_dock_discussion</receiver>
+   <slot>depart_joueur(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>415</x>
+     <y>378</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>381</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>trop_bavard()</signal>
+   <receiver>contenu_dock_discussion</receiver>
+   <slot>trop_bavard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>447</x>
+     <y>433</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>429</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contenu_dock_discussion</sender>
+   <signal>message_demande(QString)</signal>
+   <receiver>main_window</receiver>
+   <slot>send_message(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>135</x>
+     <y>470</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>437</x>
+     <y>476</y>
     </hint>
    </hints>
   </connection>
@@ -530,5 +636,18 @@
   <signal>auth_ok(bool)</signal>
   <signal>server_ok(bool)</signal>
   <signal>message(QString)</signal>
+  <signal>update_model()</signal>
+  <signal>nouveau_message(QString,QString)</signal>
+  <signal>nouveau_joueur(QString)</signal>
+  <signal>depart_joueur(QString)</signal>
+  <signal>trop_bavard()</signal>
+  <signal>invitation_annulee(QString)</signal>
+  <signal>invitation(QString,QStringList,QStringValueMap)</signal>
+  <slot>ask_server_config(QHostAddress)</slot>
+  <slot>login(QString)</slot>
+  <slot>logout()</slot>
+  <slot>disconnect_from_sgsj()</slot>
+  <slot>do_update_model()</slot>
+  <slot>send_message(QString)</slot>
  </slots>
 </ui>

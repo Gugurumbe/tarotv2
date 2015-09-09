@@ -1,3 +1,4 @@
+// -*- compile-command: "cd ../../ && make -j 5" -*-
 #ifndef TAROTV_UI_DEFINI
 
 #define TAROTV_UI_DEFINI
@@ -12,6 +13,8 @@
 #include "joueur_hors_jeu.hpp"
 
 #define on_triggered(action) on_##action##_triggered()
+
+typedef QMap<QString, tarotv::protocol::value> QStringValueMap;
 
 namespace Ui{
   class main_window;
@@ -28,19 +31,15 @@ namespace tarotv{
     public slots:
       void ask_server_config(QHostAddress host);
       void login(QString);
-      void on_liste_jhj_selection_changed();
       void logout();
       void disconnect_from_sgsj();
+      void send_message(QString);
     private slots:
       void error_while_getting_config(QString);
       void error_while_getting_id(QString);
       void set_config(tarotv::protocol::config cfg);
       void set_id(QString id);
       void auth_refused();
-      void on_triggered(action_win_listejoueurs);
-      void on_triggered(action_win_discussion);
-      void on_triggered(action_win_connexion);
-      void on_triggered(action_win_login);
       void do_update_model();
       void has_message(tarotv::protocol::message);
       void run_bus();
@@ -50,6 +49,7 @@ namespace tarotv{
       QStringList m_liste_jhj;
       tarotv::protocol::config game_config;
       QString m_id;
+      QString m_nom;
       liste_jhj * m_liste;
       QHostAddress m_adresse;
       client::msg_bus * m_bus;
@@ -58,6 +58,12 @@ namespace tarotv{
       void auth_ok(bool);
       void message(QString);
       void update_model();
+      void nouveau_message(QString, QString);
+      void nouveau_joueur(QString);
+      void depart_joueur(QString);
+      void trop_bavard();
+      void invitation_annulee(QString);
+      void invitation(QString, QStringList, QMap<QString, tarotv::protocol::value>);
     };
   };
 };

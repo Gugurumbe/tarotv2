@@ -1,3 +1,4 @@
+// -*- compile-command: "cd ../../ && make -j 5" -*-
 #ifndef Q_REQUESTS_DEFINI
 #define Q_REQUESTS_DEFINI
 
