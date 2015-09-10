@@ -34,6 +34,8 @@ namespace tarotv{
       void logout();
       void disconnect_from_sgsj();
       void send_message(QString);
+      void inviter(QStringList, QStringValueMap);
+      void annuler_invitation();
     private slots:
       void error_while_getting_config(QString);
       void error_while_getting_id(QString);
@@ -56,6 +58,7 @@ namespace tarotv{
     signals:
       void server_ok(bool);
       void auth_ok(bool);
+      void mon_nom(QString);
       void message(QString);
       void update_model();
       void nouveau_message(QString, QString);
@@ -63,7 +66,8 @@ namespace tarotv{
       void depart_joueur(QString);
       void trop_bavard();
       void invitation_annulee(QString);
-      void invitation(QString, QStringList, QMap<QString, tarotv::protocol::value>);
+      void invitation(QString, QStringList, QStringValueMap);
+      void config_recue(tarotv::protocol::config);
     };
   };
 };

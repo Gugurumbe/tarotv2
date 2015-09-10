@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>dock_invitation</class>
+ <widget class="QWidget" name="dock_invitation">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>364</width>
+    <height>518</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="4" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="bouton_monter">
+     <property name="text">
+      <string>Monter</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QGroupBox" name="formulaire_serveur">
+     <property name="title">
+      <string>Paramètres serveur</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="tarotv::ui::form_widget" name="formulaire" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="2">
+    <widget class="QPushButton" name="bouton_annuler">
+     <property name="text">
+      <string>Annuler</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="bouton_enlever">
+     <property name="text">
+      <string>Enlever</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" rowspan="4">
+    <widget class="QListView" name="liste_invites">
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <property name="movement">
+      <enum>QListView::Snap</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QPushButton" name="bouton_descendre">
+     <property name="text">
+      <string>Descendre</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="QPushButton" name="bouton_inviter">
+     <property name="text">
+      <string>Inviter</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="3">
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="1">
+       <widget class="QPushButton" name="bouton_ajouter">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Ajouter</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QComboBox" name="choix_joueurs">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+     <zorder>choix_joueurs</zorder>
+     <zorder>bouton_ajouter</zorder>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QListView" name="choix_invitation">
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>tarotv::ui::form_widget</class>
+   <extends>QWidget</extends>
+   <header>dock_invitation.hpp</header>
+   <container>1</container>
+   <slots>
+    <slot>set_types(tarotv::protocol::config)</slot>
+    <slot>set_values(QStringValueMap)</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+ <slots>
+  <signal>demander_invitation(QStringList,QStringValueMap)</signal>
+  <signal>demander_annulation()</signal>
+  <slot>set_config(tarotv::protocol::config)</slot>
+  <slot>autoriser_invitation(bool)</slot>
+  <slot>interdire_invitation(bool)</slot>
+  <slot>nouveau_joueur(QString)</slot>
+  <slot>depart_joueur(QString)</slot>
+  <slot>moi(QString)</slot>
+  <slot>nouvelle_invitation(QString,QStringList,QStringValueMap)</slot>
+  <slot>invitation_annulee(QString)</slot>
+ </slots>
+</ui>

@@ -65,6 +65,7 @@ void fenetre::login(QString nom){
   QObject::connect(req, SIGNAL(error(QString)),
   		   m_ui->contenu_dock_login, SLOT(erreur(QString)));
   req->do_request(sock, nom);
+  m_nom = nom;
   emit message(tr("Identification en tant que ") + nom + "...");
 }
 
@@ -83,6 +84,7 @@ void fenetre::error_while_getting_id(QString err){
 void fenetre::set_config(config cfg){
   game_config = cfg;
   emit message(tr("Le serveur est disponible."));
+  emit config_recue(cfg);
   emit server_ok(true);
 }
 
@@ -104,6 +106,7 @@ void fenetre::set_id(QString id){
   emit message(tr("Vous êtes authentifié : ") + id);
   emit auth_ok(true);
   run_bus();
+  emit mon_nom(m_nom);
 }
 void fenetre::auth_refused(){
   emit message(tr("Authentification échouée."));
@@ -195,4 +198,22 @@ void fenetre::send_message(QString msg){
   		   this, SIGNAL(trop_bavard())); // Discutable.
   req->do_request(sock, m_id, msg);
   emit message(tr("Envoi d'un message..."));
+}
+
+void fenetre::inviter(QStringList invites, QStringValueMap param){
+  value_socket * sock = new value_socket();
+  QObject::connect(sock, SIGNAL(disconnected()), sock, SLOT(deleteLater()));
+  sock->connectToHost(m_adresse, 45678);
+  inv_request * req = new inv_request(sock);
+  req->do_request(sock, m_id, invites, param);
+  emit message(tr("Demande d'invitation..."));
+}
+
+void fenetre::annuler_invitation(){
+  value_socket * sock = new value_socket();
+  QObject::connect(sock, SIGNAL(disconnected()), sock, SLOT(deleteLater()));
+  sock->connectToHost(m_adresse, 45678);
+  cancel_inv_request * req = new cancel_inv_request(sock);
+  req->do_request(sock, m_id);
+  emit message(tr("Annulation de l'invitation..."));
 }

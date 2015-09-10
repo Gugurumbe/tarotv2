@@ -4,6 +4,8 @@ dock_connexion_moc.opp
 dock_connexion.opp
 dock_discussion_moc.opp
 dock_discussion.opp
+dock_invitation_moc.opp
+dock_invitation.opp
 dock_login_moc.opp
 dock_login.opp
 joueur_hors_jeu_moc.opp

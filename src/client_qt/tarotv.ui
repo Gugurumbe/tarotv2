@@ -180,8 +180,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>250</width>
-          <height>387</height>
+          <width>280</width>
+          <height>352</height>
          </rect>
         </property>
         <attribute name="label">
@@ -198,8 +198,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>250</width>
-          <height>387</height>
+          <width>280</width>
+          <height>352</height>
          </rect>
         </property>
         <attribute name="label">
@@ -216,8 +216,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>250</width>
-          <height>387</height>
+          <width>280</width>
+          <height>352</height>
          </rect>
         </property>
         <attribute name="label">
@@ -226,6 +226,16 @@
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
           <widget class="tarotv::ui::dock_discussion" name="contenu_dock_discussion" native="true"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_liste_joueurs">
+        <attribute name="label">
+         <string>Inviter</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="tarotv::ui::dock_invitation" name="contenu_dock_invitation" native="true"/>
          </item>
         </layout>
        </widget>
@@ -336,6 +346,24 @@
     <slot>trop_bavard()</slot>
     <slot>nouveau_joueur(QString)</slot>
     <slot>depart_joueur(QString)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>tarotv::ui::dock_invitation</class>
+   <extends>QWidget</extends>
+   <header>dock_invitation.hpp</header>
+   <container>1</container>
+   <slots>
+    <signal>demander_invitation(QStringList,QStringValueMap)</signal>
+    <signal>demander_annulation()</signal>
+    <slot>set_config(tarotv::protocol::config)</slot>
+    <slot>autoriser_invitation(bool)</slot>
+    <slot>interdire_invitation(bool)</slot>
+    <slot>nouveau_joueur(QString)</slot>
+    <slot>depart_joueur(QString)</slot>
+    <slot>moi(QString)</slot>
+    <slot>nouvelle_invitation(QString,QStringList,QStringValueMap)</slot>
+    <slot>invitation_annulee(QString)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -631,6 +659,150 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>auth_ok(bool)</signal>
+   <receiver>contenu_dock_invitation</receiver>
+   <slot>autoriser_invitation(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>535</x>
+     <y>333</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>312</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>config_recue(tarotv::protocol::config)</signal>
+   <receiver>contenu_dock_invitation</receiver>
+   <slot>set_config(tarotv::protocol::config)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>460</x>
+     <y>342</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>337</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>depart_joueur(QString)</signal>
+   <receiver>contenu_dock_invitation</receiver>
+   <slot>depart_joueur(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>518</x>
+     <y>402</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>236</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>invitation(QString,QStringList,QStringValueMap)</signal>
+   <receiver>contenu_dock_invitation</receiver>
+   <slot>nouvelle_invitation(QString,QStringList,QStringValueMap)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>500</x>
+     <y>450</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>246</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>invitation_annulee(QString)</signal>
+   <receiver>contenu_dock_invitation</receiver>
+   <slot>invitation_annulee(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>344</x>
+     <y>454</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>251</x>
+     <y>468</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>mon_nom(QString)</signal>
+   <receiver>contenu_dock_invitation</receiver>
+   <slot>moi(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>495</x>
+     <y>501</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>253</x>
+     <y>493</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>main_window</sender>
+   <signal>nouveau_joueur(QString)</signal>
+   <receiver>contenu_dock_invitation</receiver>
+   <slot>nouveau_joueur(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>526</x>
+     <y>513</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>265</x>
+     <y>519</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contenu_dock_invitation</sender>
+   <signal>demander_annulation()</signal>
+   <receiver>main_window</receiver>
+   <slot>annuler_invitation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>234</x>
+     <y>288</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>449</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contenu_dock_invitation</sender>
+   <signal>demander_invitation(QStringList,QStringValueMap)</signal>
+   <receiver>main_window</receiver>
+   <slot>inviter(QStringList,QStringValueMap)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>254</x>
+     <y>271</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>419</x>
+     <y>273</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>auth_ok(bool)</signal>
@@ -643,11 +815,15 @@
   <signal>trop_bavard()</signal>
   <signal>invitation_annulee(QString)</signal>
   <signal>invitation(QString,QStringList,QStringValueMap)</signal>
+  <signal>mon_nom(QString)</signal>
+  <signal>config_recue(tarotv::protocol::config)</signal>
   <slot>ask_server_config(QHostAddress)</slot>
   <slot>login(QString)</slot>
   <slot>logout()</slot>
   <slot>disconnect_from_sgsj()</slot>
   <slot>do_update_model()</slot>
   <slot>send_message(QString)</slot>
+  <slot>inviter(QStringList,QStringValueMap)</slot>
+  <slot>annuler_invitation()</slot>
  </slots>
 </ui>
