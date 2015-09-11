@@ -19,7 +19,7 @@ fenetre::fenetre(QWidget * parent):
   m_bus(0){
   m_ui->setupUi(this);
   //m_ui->liste_jhj->setModel(m_liste);  
-  emit server_ok(false); emit auth_ok(false); emit message("Bienvenue.");
+  emit server_ok(false); emit auth_ok(false); emit en_jeu(false); emit message("Bienvenue.");
 }
 
 fenetre::~fenetre(){
@@ -105,8 +105,8 @@ void fenetre::set_id(QString id){
   m_id = id;
   emit message(tr("Vous êtes authentifié : ") + id);
   emit auth_ok(true);
-  run_bus();
   emit mon_nom(m_nom);
+  run_bus();
 }
 void fenetre::auth_refused(){
   emit message(tr("Authentification échouée."));
@@ -180,12 +180,20 @@ void fenetre::run_bus(){
   m_bus = new msg_bus(m_adresse, m_id, this);
   QObject::connect(m_bus, SIGNAL(has_message(tarotv::protocol::message)),
 		   this, SLOT(has_message(tarotv::protocol::message)));
-  QObject::connect(m_bus, SIGNAL(end(QString)),
-		   this, SLOT(end_of_bus(QString)));
+  QObject::connect(m_bus, SIGNAL(end()),
+		   this, SLOT(end_of_bus()));
+  QObject::connect(m_bus, SIGNAL(error(QString)),
+		   this, SLOT(bus_error(QString)));
   m_bus->run();
 }
-void fenetre::end_of_bus(QString why){
-  qDebug()<<"Le bus a terminé : "<<why;
+void fenetre::end_of_bus(){
+  emit message(tr("Entrée en jeu !"));
+  emit en_jeu(true);
+}
+void fenetre::bus_error(QString err){
+  emit message(tr("Le bus a fermé : ") + err);
+  logout();
+  emit auth_ok(false);
 }
 void fenetre::send_message(QString msg){
   value_socket * sock = new value_socket();

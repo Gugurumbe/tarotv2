@@ -35,7 +35,7 @@ namespace tarotv{
     };
     enum t_message {
       is_nouveau_joueur, is_depart_joueur, is_invitation_annulee,
-      is_invitation, is_text
+      is_invitation, is_text, is_en_jeu
     };
     struct message{
       t_message t;

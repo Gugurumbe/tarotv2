@@ -131,10 +131,12 @@ namespace tarotv{
       void run();
     signals:
       void has_message(tarotv::protocol::message);
-      void end(QString err);
+      void end();
+      void error(QString err);
     private slots:
       void should_pop();
       void set_idle(QString);
+      void check(tarotv::protocol::message);
     private: bool m_running; const QHostAddress m_addr; const QString m_id;
     };
   };

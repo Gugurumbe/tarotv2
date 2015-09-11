@@ -45,7 +45,8 @@ namespace tarotv{
       void do_update_model();
       void has_message(tarotv::protocol::message);
       void run_bus();
-      void end_of_bus(QString);
+      void end_of_bus();
+      void bus_error(QString);
     private:
       Ui::main_window * m_ui;
       QStringList m_liste_jhj;
@@ -58,6 +59,7 @@ namespace tarotv{
     signals:
       void server_ok(bool);
       void auth_ok(bool);
+      void en_jeu(bool);
       void mon_nom(QString);
       void message(QString);
       void update_model();

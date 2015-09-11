@@ -150,7 +150,7 @@ void dock_invitation::interdire_invitation(bool ok){
 }
 
 void dock_invitation::nouveau_joueur(QString nouveau){
-  if(!m_joueurs.contains(nouveau)){
+  if(!m_joueurs.contains(nouveau) && m_moi != nouveau){
     m_joueurs.append(nouveau);
     m_joueurs.sort();
     emit joueurs_maj();
@@ -175,7 +175,10 @@ void dock_invitation::depart_joueur(QString joueur){
 }
 
 void dock_invitation::moi(QString superchampion){
-  m_mes_invites << superchampion;
+  if(!m_mes_invites.contains(superchampion)){
+    m_mes_invites << superchampion;
+  }
+  m_moi = superchampion;
   emit joueurs_maj();
   check();
 }
@@ -225,7 +228,7 @@ void dock_invitation::on_liste_invites_activated(const QModelIndex & index){
 
 void dock_invitation::on_bouton_enlever_clicked(){
   int i = m_ui->liste_invites->currentIndex().row();
-  bool ok = i >= 0 &&i < m_mes_invites.size() && m_mes_invites[i] != m_moi;
+  bool ok = i >= 0 && i < m_mes_invites.size() && m_mes_invites[i] != m_moi;
   if(ok){
     m_joueurs << m_mes_invites[i];
     m_joueurs.sort();

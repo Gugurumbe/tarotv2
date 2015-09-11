@@ -270,11 +270,19 @@ void msg_bus::run(){
     QObject::connect(req, SIGNAL(has_message(tarotv::protocol::message)),
 		     this, SIGNAL(has_message(tarotv::protocol::message)));
     QObject::connect(req, SIGNAL(has_message(tarotv::protocol::message)),
-		     this, SLOT(should_pop()));
+		     this, SLOT(check(tarotv::protocol::message)));
     QObject::connect(req, SIGNAL(error(QString)), this, SLOT(set_idle(QString)));
     
     req->do_request(sock, m_id);
   }
+}
+
+void msg_bus::check(tarotv::protocol::message message){
+  if(message.t == tarotv::protocol::is_en_jeu){
+    m_running = false;
+    emit end();
+  }
+  else should_pop();
 }
 
 void msg_bus::should_pop(){
@@ -286,7 +294,7 @@ void msg_bus::should_pop(){
     pop_request * req = new pop_request(sock);
 
     QObject::connect(req, SIGNAL(ok()), this, SLOT(run()));
-    QObject::connect(req, SIGNAL(error(QString)), this, SIGNAL(end(QString)));
+    QObject::connect(req, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
     
     req->do_request(sock, m_id);
   }
@@ -298,6 +306,6 @@ void msg_bus::set_idle(QString why){
     run();
   }
   else {
-    emit end(why);
+    emit error(why);
   }
 }

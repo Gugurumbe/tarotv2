@@ -1,3 +1,4 @@
+// -*- compile-command: "cd ../../ && make -j 5" -*-
 #include "messages.hpp"
 
 using namespace std;
@@ -115,6 +116,9 @@ tarotv::protocol::message tarotv::protocol::get_message(const tarotv::protocol::
 	}
 	else throw invalid_message_structure("Text: no \"message\" argument in "
 					     + contenu.print());
+      }
+      else if(type == "En_jeu"){
+	msg.t = is_en_jeu;
       }
       else throw invalid_message_structure(type + " is not a valid message type in "
 					   + v.print());

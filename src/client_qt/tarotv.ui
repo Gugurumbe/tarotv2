@@ -180,7 +180,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>280</width>
+          <width>91</width>
           <height>352</height>
          </rect>
         </property>
@@ -198,8 +198,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>280</width>
-          <height>352</height>
+          <width>100</width>
+          <height>30</height>
          </rect>
         </property>
         <attribute name="label">
@@ -216,8 +216,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>280</width>
-          <height>352</height>
+          <width>100</width>
+          <height>30</height>
          </rect>
         </property>
         <attribute name="label">
@@ -230,6 +230,14 @@
         </layout>
        </widget>
        <widget class="QWidget" name="page_liste_joueurs">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>100</width>
+          <height>30</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Inviter</string>
         </attribute>
@@ -430,8 +438,8 @@
      <y>264</y>
     </hint>
     <hint type="destinationlabel">
-     <x>164</x>
-     <y>261</y>
+     <x>90</x>
+     <y>334</y>
     </hint>
    </hints>
   </connection>
@@ -446,8 +454,8 @@
      <y>301</y>
     </hint>
     <hint type="destinationlabel">
-     <x>188</x>
-     <y>310</y>
+     <x>90</x>
+     <y>383</y>
     </hint>
    </hints>
   </connection>
@@ -458,8 +466,8 @@
    <slot>ask_server_config(QHostAddress)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>162</x>
-     <y>380</y>
+     <x>90</x>
+     <y>450</y>
     </hint>
     <hint type="destinationlabel">
      <x>495</x>
@@ -474,8 +482,8 @@
    <slot>disconnect_from_sgsj()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>167</x>
-     <y>431</y>
+     <x>90</x>
+     <y>450</y>
     </hint>
     <hint type="destinationlabel">
      <x>472</x>
@@ -538,8 +546,8 @@
    <slot>login(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>138</x>
-     <y>430</y>
+     <x>137</x>
+     <y>415</y>
     </hint>
     <hint type="destinationlabel">
      <x>421</x>
@@ -554,8 +562,8 @@
    <slot>logout()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>479</y>
+     <x>139</x>
+     <y>415</y>
     </hint>
     <hint type="destinationlabel">
      <x>460</x>
@@ -638,8 +646,8 @@
      <y>433</y>
     </hint>
     <hint type="destinationlabel">
-     <x>192</x>
-     <y>429</y>
+     <x>191</x>
+     <y>415</y>
     </hint>
    </hints>
   </connection>
@@ -650,8 +658,8 @@
    <slot>send_message(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>135</x>
-     <y>470</y>
+     <x>134</x>
+     <y>415</y>
     </hint>
     <hint type="destinationlabel">
      <x>437</x>
@@ -670,8 +678,8 @@
      <y>333</y>
     </hint>
     <hint type="destinationlabel">
-     <x>185</x>
-     <y>312</y>
+     <x>27</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -686,8 +694,8 @@
      <y>342</y>
     </hint>
     <hint type="destinationlabel">
-     <x>229</x>
-     <y>337</y>
+     <x>27</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -702,8 +710,8 @@
      <y>402</y>
     </hint>
     <hint type="destinationlabel">
-     <x>236</x>
-     <y>395</y>
+     <x>27</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -718,8 +726,8 @@
      <y>450</y>
     </hint>
     <hint type="destinationlabel">
-     <x>246</x>
-     <y>430</y>
+     <x>27</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -734,8 +742,8 @@
      <y>454</y>
     </hint>
     <hint type="destinationlabel">
-     <x>251</x>
-     <y>468</y>
+     <x>27</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -750,8 +758,8 @@
      <y>501</y>
     </hint>
     <hint type="destinationlabel">
-     <x>253</x>
-     <y>493</y>
+     <x>27</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -766,8 +774,8 @@
      <y>513</y>
     </hint>
     <hint type="destinationlabel">
-     <x>265</x>
-     <y>519</y>
+     <x>27</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -778,8 +786,8 @@
    <slot>annuler_invitation()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>234</x>
-     <y>288</y>
+     <x>27</x>
+     <y>91</y>
     </hint>
     <hint type="destinationlabel">
      <x>449</x>
@@ -794,8 +802,8 @@
    <slot>inviter(QStringList,QStringValueMap)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>254</x>
-     <y>271</y>
+     <x>27</x>
+     <y>91</y>
     </hint>
     <hint type="destinationlabel">
      <x>419</x>
@@ -817,6 +825,7 @@
   <signal>invitation(QString,QStringList,QStringValueMap)</signal>
   <signal>mon_nom(QString)</signal>
   <signal>config_recue(tarotv::protocol::config)</signal>
+  <signal>en_jeu(bool)</signal>
   <slot>ask_server_config(QHostAddress)</slot>
   <slot>login(QString)</slot>
   <slot>logout()</slot>
