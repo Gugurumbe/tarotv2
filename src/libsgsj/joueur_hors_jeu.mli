@@ -1,3 +1,4 @@
+(* -*- compile-command: "cd ../../ && make -j 5" -*- *)
 module type ARBITRE = sig
   val accepter_identification: Bytes.t -> bool Lwt.t (* Sous réserve qu'il n'est pas déjà pris *)
   val accepter_invitation: int -> Value.t -> bool Lwt.t
@@ -23,12 +24,18 @@ module type TIMEOUT = sig
   val retarder: t -> unit
 end
 
-module Make (D:DATABASE) (A:ARBITRE) (T:TIMEOUT): sig
+module type JOUEUR_EN_JEU = sig
+  val existe: Bytes.t -> bool Lwt.t
+  val creer_partie: Bytes.t list -> Value.t -> unit Lwt.t
+end
+
+module Make (D:DATABASE) (A:ARBITRE) (T:TIMEOUT) (Joueur_en_jeu:JOUEUR_EN_JEU): sig
   type evenement = 
     | Nouveau_joueur of Bytes.t
     | Depart_joueur of Bytes.t
     | Invitation of (Bytes.t list * Value.t) option * Bytes.t
     | Message of (Bytes.t * Bytes.t) (* nom - contenu *)
+    | En_jeu
   exception Joueur_inconnu
   exception Identification_refusee
   exception Invitation_refusee

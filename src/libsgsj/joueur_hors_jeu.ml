@@ -24,12 +24,18 @@ module type TIMEOUT = sig
   val retarder: t -> unit
 end
 
+module type JOUEUR_EN_JEU = sig
+  val existe: Bytes.t -> bool Lwt.t
+  val creer_partie: Bytes.t list -> Value.t -> unit Lwt.t
+end
+
 module type Joueur_hors_jeu = sig
   type evenement = 
     | Nouveau_joueur of Bytes.t
     | Depart_joueur of Bytes.t
     | Invitation of (Bytes.t list * Value.t) option * Bytes.t
     | Message of (Bytes.t * Bytes.t)
+    | En_jeu
   exception Joueur_inconnu
   exception Identification_refusee
   exception Invitation_refusee
@@ -45,12 +51,13 @@ module type Joueur_hors_jeu = sig
 end
 open Lwt
 
-module Make (Database:DATABASE) (Arbitre:ARBITRE) (Timeout:TIMEOUT): Joueur_hors_jeu = struct
+module Make (Database:DATABASE) (Arbitre:ARBITRE) (Timeout:TIMEOUT) (Joueur_en_jeu:JOUEUR_EN_JEU): Joueur_hors_jeu = struct
   type evenement =
     | Nouveau_joueur of Bytes.t
     | Depart_joueur of Bytes.t
     | Invitation of (Bytes.t list * Value.t) option * Bytes.t
     | Message of (Bytes.t * Bytes.t)
+    | En_jeu
 
   exception Joueur_inconnu
   exception Identification_refusee
@@ -159,10 +166,21 @@ module Make (Database:DATABASE) (Arbitre:ARBITRE) (Timeout:TIMEOUT): Joueur_hors
   let nouveau nom = with_mutex (fun () -> nouveau_unsafe nom)
   let nom id = find id >>= fun t -> return t.nom
   let invitation id = find id >>= fun t -> return t.invitation
-  let peek_message id = find id >>= fun t ->
-    Timeout.retarder t.timeout;
-    try return (Queue.peek t.evenements) with
-    | _ -> wait id
+  let peek_message id =
+    try_bind (fun () -> find id)
+      (fun t ->
+         Timeout.retarder t.timeout;
+         try return (Queue.peek t.evenements) with
+         | _ -> wait id)
+      (function
+        | Joueur_inconnu ->
+          let est_en_jeu = Joueur_en_jeu.existe id in
+          let verifier ok =
+            if ok then return En_jeu
+            else fail Joueur_inconnu
+          in
+          est_en_jeu >>= verifier
+        | exn -> fail exn)        
   let next_message id = find id >>= fun t ->
     Timeout.retarder t.timeout;
     let _ = Queue.take t.evenements in
@@ -245,7 +263,6 @@ module Make (Database:DATABASE) (Arbitre:ARBITRE) (Timeout:TIMEOUT): Joueur_hors
                 else
                   let () = Printf.printf "L'invitation a réussi entre %s (%s).\n%!"
                       (Bytes.concat ", " liste_ids) (Value.print false parametre) in
-                  let () = exit 0 in
-                  return ()))
+                  Joueur_en_jeu.creer_partie liste_ids parametre))
   let set_invitation id invit = with_mutex (fun () -> set_invitation_unsafe id invit)
 end

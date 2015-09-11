@@ -138,7 +138,9 @@ let to_carte t =
 
 let to_cartes t = List.map to_carte (to_list t)
 
-let traiter_requete x =
+let to_do = ref []
+
+let rec traiter_requete x =
   let (cmd, arg) = to_labelled x in
   let table = to_table arg in
   let nargs_expected n =
@@ -152,7 +154,7 @@ let traiter_requete x =
   match cmd with
   | "config" ->
     let () = nargs_expected 0 in
-    configuration ()
+    Lwt.return (configuration ())
   | "creer_partie" ->
     let () = nargs_expected 2 in
     let nombre_joueurs = to_int (find "nplayers") in
@@ -165,41 +167,42 @@ let traiter_requete x =
       match creer_partie_aleatoire nombre_levees
       with None -> failwith "Impossible de distribuer"
          | Some id -> id in
-    String partie
+    Lwt.return (String partie)
   | "lister_parties" ->
     let () = nargs_expected 0 in
-    List (List.map (fun s -> String s) (lister_parties ()))
+    Lwt.return (List (List.map (fun s -> String s) (lister_parties ())))
   | "lister_joueurs_prets" ->
     let () = nargs_expected 0 in
-    List (List.map (fun (p, j) -> of_labelled p (of_int j))
-            (lister_joueurs_prets ()))
+    Lwt.return (List (List.map (fun (p, j) -> of_labelled p (of_int j))
+                        (lister_joueurs_prets ())))
   | "lister_parties_terminees" ->
     let () = nargs_expected 0 in
-    List (List.map (fun (p, res) ->
+    let reponse = List (List.map (fun (p, res) ->
         of_labelled p
           (List (List.map of_int (Array.to_list res))))
-        (lister_parties_terminees ()))
+        (lister_parties_terminees ())) in
+    Lwt.return reponse
   | "supprimer_partie" ->
     let () = nargs_expected 1 in
     let nom = to_string (find "partie") in
     let () = supprimer_partie nom in
-    List []
+    Lwt.return (List [])
   | "peek_message" ->
     let () = nargs_expected 2 in
     let partie = to_string (find "partie") in
     let numero_joueur = to_int (find "joueur") in
     let msg = peek_message partie numero_joueur in
-    let reponse = match msg with
-      | None -> List []
-      | Some msg -> List [of_message msg]
-    in
-    reponse
+    begin match msg with
+      | None -> let (t, u) = Lwt.wait () in
+        let () = to_do := u :: !to_do in
+        Lwt.bind t (fun () -> traiter_requete x)
+      | Some msg -> Lwt.return (List [of_message msg]) end
   | "next_message" ->
     let () = nargs_expected 2 in
     let partie = to_string (find "partie") in
     let numero_joueur = to_int (find "joueur") in
     let () = next_message partie numero_joueur in
-    List []
+    Lwt.return (List [])
   | "verifier" ->
     let () = nargs_expected 3 in
     let p = to_string (find "partie") in
@@ -220,7 +223,7 @@ let traiter_requete x =
         raise (Missing_argument "enchere | appel | ecart \
                                  | chelem | poignee | jeu")
     in
-    of_bool ok
+    Lwt.return (of_bool ok)
   | "effectuer" ->
     let () = nargs_expected 3 in
     let p = to_string (find "partie") in
@@ -241,7 +244,7 @@ let traiter_requete x =
         raise (Missing_argument "enchere | appel | ecart \
                                  | chelem | poignee | jeu")
     in
-    List []
+    Lwt.return (List [])
   | str -> raise (Invalid_command str)
              
 let traiter_requete = function
@@ -250,9 +253,23 @@ let traiter_requete = function
 
 let traiter_requete req =
   try
-    of_labelled "OK" (traiter_requete req)
+    Lwt.try_bind
+      (fun () -> traiter_requete req)
+      (fun rep ->
+         Lwt.return (of_labelled "OK" rep))
+      (fun exn ->
+         Lwt.return (of_labelled "ERR"
+                       (of_string (Printexc.to_string exn))))
   with exn ->
-    of_labelled "ERR"
-      (of_string (Printexc.to_string exn))
+    Lwt.return (of_labelled "ERR"
+                  (of_string (Printexc.to_string exn)))
 
-let run = Lwt_stream.map (traiter_requete)
+let traiter_requete req =
+  Lwt.bind
+    (traiter_requete req)
+    (fun reponse -> let to_do_list = List.rev !to_do in
+      let () = to_do := [] in
+      let () = List.iter (fun td -> Lwt.wakeup td ()) to_do_list in
+      Lwt.return reponse)
+
+let run = Lwt_stream.map_s (traiter_requete)

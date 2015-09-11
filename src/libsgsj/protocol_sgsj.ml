@@ -16,13 +16,15 @@ module Make (Backend:BACKEND) (Frontend:FRONTEND) = struct
     let get_config () = Config.get_config Backend.requete
     let vitesse_lecture () = 0.01
     let timeout_partie () = 600.
+    let transmettre_requete = Backend.requete
   end
   module Time = struct
     let gettimeofday () = Unix.gettimeofday ()
   end
   module Arbitre_eff = Arbitre.Make (Comm) (Time)
   module Timeout = Videur
-  module Jhj = Joueur_hors_jeu.Make (Database) (Arbitre_eff) (Timeout)
+  module Jej = Joueur_en_jeu.Make (Database) (Comm) (Timeout)
+  module Jhj = Joueur_hors_jeu.Make (Database) (Arbitre_eff) (Timeout) (Jej)
   let of_message = function
     | Jhj.Nouveau_joueur nom ->
       let table = Hashtbl.create 1 in
@@ -48,6 +50,9 @@ module Make (Backend:BACKEND) (Frontend:FRONTEND) = struct
       let () = Hashtbl.add table "joueur" (Value.of_string emetteur) in
       let () = Hashtbl.add table "message" (Value.of_string msg) in
       Value.of_labelled "Message" (Value.of_table table)
+    | Jhj.En_jeu ->
+      let table = Hashtbl.create 0 in
+      Value.of_labelled "En_jeu" (Value.of_table table)
   exception Too_many_arguments
   exception Too_few_arguments
   exception Invalid_command
@@ -102,6 +107,11 @@ module Make (Backend:BACKEND) (Frontend:FRONTEND) = struct
       let () = attendus 1 in
       (Jhj.set_invitation (Value.to_string (find "id")) None)
       >>= fun () -> return (Value.of_list [])
+    | "jeu" ->
+      let () = attendus 2 in
+      let arguments = find "arguments" in
+      let id = Value.to_string (find "id") in
+      Jej.transmettre_requete id arguments
     | _ -> raise Invalid_command
   let effectuer_requete = function
     | Lwt_stream.Value req -> effectuer_requete req
