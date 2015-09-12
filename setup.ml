@@ -7071,89 +7071,11 @@ let which pathlst fname =
   in
   OASISFileUtil.find_file ~case_sensitive:false [pathlst; [fname]] exec_ext
 
-let run_read_one_line cmd args = OASISExec.run_read_one_line
-    ~ctxt:!BaseContext.default cmd args
-
-let query_path_via_qmake qmake_exec variable =
-  run_read_one_line qmake_exec ["-query"; variable]
-
-let protect f = try Some (f ()) with _ -> None
-
-let filter_map f list =
-  let mapped = List.map f list in
-  let filtered = List.filter ((<>) None) mapped in
-  let objects = List.map (function None -> failwith "No." | Some x -> x) filtered in
-  objects
-
-let rec expand_directories paths n_rec =
-  if n_rec <= 0 then paths
-  else
-    let readdir dir =
-      try Array.to_list (Sys.readdir dir)
-      with Sys_error _ -> []
-    in
-    let completions = List.map readdir paths in
-    let is_directory path =
-      try Sys.file_exists path && Sys.is_directory path
-      with Sys_error _ -> false in
-    let complete_paths =
-      List.map2
-        (fun root_path completions ->
-           List.map
-             (fun comp -> Filename.concat root_path comp)
-             completions)
-        paths completions in
-    let complete_paths = List.concat complete_paths in
-    let dirs = List.filter is_directory (paths @ complete_paths) in
-    expand_directories dirs (n_rec - 1)
-
 let setup_qt () =
   if Array.length Sys.argv >= 2 && Sys.argv.(1) = "-configure"
   then
     let qmake_exec = which standard_paths "qmake" in
-    let qmake_query = query_path_via_qmake qmake_exec in
-    let qt_bin_paths =
-      try [qmake_query "QT_INSTALL_BINS"]
-      with _ -> standard_paths in
-    let qt_include_paths =
-      try
-        let orig_paths = [qmake_query "QT_INSTALL_HEADERS"] in
-        expand_directories orig_paths 1
-      with _ -> standard_paths in
-    let qt_lib_paths =
-      try [qmake_query "QT_INSTALL_LIBS"]
-      with _ -> standard_paths in
-    let possible_compilers = ["c++"; "g++"; "clang"] in
-    let usable_compilers = filter_map (fun cmp -> protect
-                                          (fun () -> which standard_paths cmp))
-        possible_compilers in    
-    let cxx = match usable_compilers with
-      | [] ->
-        let () =
-          Printf.eprintf
-            "Could not find any c++ compilers (tried to find one of [%s] in path). \
-             Please do some ln -s and/or update your path.\n%!"
-            (String.concat ", " possible_compilers) in
-        exit 1
-      | a :: _ -> a
-    in
-    let find_qt_prog name =
-      try
-        which qt_bin_paths name
-      with
-      | _ ->
-        let () = Printf.eprintf
-            "Could not find the '%s' executable in path nor in cmake's configuration.\n%!"
-            name
-        in exit 1 in
-    let moc = find_qt_prog "moc" in
-    let qdoc = find_qt_prog "qdoc" in
-    let rcc = find_qt_prog "rcc" in
-    let uic = find_qt_prog "uic" in
-    let cflags = List.map (fun s -> "-I"^s) qt_include_paths in
-    let cflags = "-fPIC" :: cflags in
-    let lflags = List.map (fun s -> "-L"^s) qt_lib_paths in
-    let lflags = "-lGL" :: "-lpthread" :: lflags in
+    let make_exec = which standard_paths "make" in
     let () = Printf.printf "QMake configuration: \n" in
     let chan = open_out_bin "setup.qmake.data" in
     let dots_per_line = 52 in
@@ -7164,28 +7086,12 @@ let setup_qt () =
       let () = Printf.printf "%s: %s %s\n"
           name dots value in
       Printf.fprintf chan "%s=%S\n" name value in
-    let output_list (name, values) =
-      let n_dots = dots_per_line - String.length name in
-      let n_dots = max 0 n_dots in
-      let dots = String.make n_dots '.' in
-      let escaped str = "\""^(String.escaped str)^"\"" in
-      let () = Printf.printf "%s: %s %s\n"
-          name dots (String.concat ", " values) in
-      Printf.fprintf chan "%s=%s\n"
-        name (String.concat "," (List.map escaped values)) in
     let () = List.iter output [
-        "cxx", cxx;
-        "moc", moc;
-        "qdoc", qdoc;
-        "rcc", rcc;
-        "uic", uic
-      ] in
-    let () = List.iter output_list [
-        "cflags", cflags;
-        "lflags", lflags
+        "qmake", qmake_exec;
+        "make", make_exec;
       ] in
     let () = close_out chan in
-let () = Printf.printf "%!" in
+    let () = Printf.printf "%!" in
     ()
   else ()
 

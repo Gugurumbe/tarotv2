@@ -902,30 +902,22 @@ let filter_map f list =
 let qmake_dispatch = function
   | After_rules ->
     let open Pathname in
-    rule "Link a c++ executable that uses Qt. To fool OASIS, it has extension .cxxnative.byte."
-      ~deps:["%.qtobjs"; "%.qtpackages"]
+    rule "Use qmake to configure a Qt app."
+      ~dep: "%.qmake"
+      ~prod: "%.Makefile"
+      (fun env _build ->
+         let input = env "%.qmake" in
+         let output = env "%.Makefile" in
+         let tags = tags_of_pathname (env "%.qmake") in
+         Cmd (S [A (find_one "qmake"); T tags; A "-o"; P output; P input]));
+    rule "Use make to build a Qt app. To fool OASIS, it has extension .cxxnative.byte."
+      ~dep: "%.Makefile"
       ~prod:"%.cxxnative.byte"
-      (fun env build ->
-         let dir = Pathname.dirname (env "%.qtobjs") in
-         let output = env "%.cxxnative.byte" in
-         let objlist = pwd / (env "%.qtobjs") in
-         let liblist = pwd / (env "%.qtpackages") in
-         let objs = List.map (fun o -> dir / o) (read_lines objlist) in
-         let packages = read_lines liblist in
-         let lflags = List.map (fun p -> "-l"^p) packages
-                      @ find_all "lflags" in
-         let success_builds = build (List.map (fun o -> [o]) objs) in
-         let objects = filter_map
-             (function
-               | Outcome.Good x when get_extension x = "opp" ->
-                 Some (pwd / "_build" /  x)
-               | Outcome.Good _ -> None
-               | Outcome.Bad exn -> raise exn)
-             success_builds in
-         let tags_objs = tags_of_pathname (env "%.qtobjs") ++ "link" in
-         let tags_packs = tags_of_pathname (env "%.qtpackages") in
-         Cmd (S [A (find_one "cxx"); T tags_objs; T tags_packs; Command.atomize lflags;
-                 A "-o"; P output; Command.atomize objects]));                 
+      (fun env _build ->
+         let input = env "%.Makefile" in
+         let tags = tags_of_pathname (env "%.Makefile") in
+         Cmd (S [A (find_one "make"); T tags;
+                 A "-f"; P input]));                 
     rule "Compile a cpp file into an object file \
           using the c++ compiler path in setup.qmake.data."
       ~dep:"%.cpp"
