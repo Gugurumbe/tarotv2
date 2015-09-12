@@ -1,6 +1,6 @@
 // -*- compile-command: "cd ../../ && make -j 5" -*-
 #include "dock_invitation.hpp"
-#include "dock_invitation_ui.h"
+#include "ui_dock_invitation.h"
 
 using namespace tarotv::protocol;
 using namespace tarotv::client;

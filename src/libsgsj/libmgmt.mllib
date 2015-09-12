@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 6133b228c40d44892e2a7dc43a21c93c)
+# DO NOT EDIT (digest: efe0775ad105cffb8708e6786dd398e9)
 Mgmt
 Config
 Joueur_hors_jeu
@@ -7,4 +7,5 @@ Arbitre
 Database
 Videur
 Protocol_sgsj
+Joueur_en_jeu
 # OASIS_STOP

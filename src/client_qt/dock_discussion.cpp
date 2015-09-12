@@ -1,6 +1,6 @@
 // -*- compile-command: "cd ../../ && make -j 5" -*-
 #include "dock_discussion.hpp"
-#include "dock_discussion_ui.h"
+#include "ui_dock_discussion.h"
 
 using namespace tarotv::protocol;
 using namespace tarotv::ui;

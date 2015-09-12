@@ -1,6 +1,6 @@
 // -*- compile-command: "cd ../../ && make -j 5" -*-
 #include "tarotv.hpp"
-#include "tarotv_ui.h"
+#include "ui_tarotv.h"
 #include "q_requests.hpp"
 #include "dock_connexion.hpp"
 #include "dock_login.hpp"

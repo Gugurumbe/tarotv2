@@ -828,8 +828,8 @@ let read_config_file () =
   in
   read
     
-let load_qmake_data () =
-  let chan = open_in_bin "setup.qmake.data" in
+let load_cmake_data () =
+  let chan = open_in_bin "setup.cmake.data" in
   let reader = read_config_file () in
   let table = Hashtbl.create 10 in
   let read c = 
@@ -868,7 +868,7 @@ let read_lines fname =
   aux []
 
 let table =
-  try load_qmake_data ()
+  try load_cmake_data ()
   with _ -> let () = Printf.eprintf "Please run \"ocaml setup.ml -configure\".\n%!" in
     exit 1
 
@@ -878,7 +878,7 @@ let find_one k =
     | [] -> raise Not_found
     | a :: _ -> a
   with Not_found ->
-    let () = Printf.printf "Could not find a %S entry in setup.qmake.data.\n%!"
+    let () = Printf.printf "Could not find a %S entry in setup.cmake.data.\n%!"
         k in
     raise Not_found
 
@@ -886,7 +886,7 @@ let find_all k =
   try
     Hashtbl.find table k
   with Not_found ->
-    let () = Printf.printf "Could not find a %S entry in setup.qmake.data.\n%!"
+    let () = Printf.printf "Could not find a %S entry in setup.cmake.data.\n%!"
         k in
     raise Not_found
 
@@ -899,29 +899,33 @@ let filter_map f list =
   let filtered = List.filter ((<>) None) mapped in
   List.map the filtered
 
-let qmake_dispatch = function
+let cmake_dispatch = function
   | After_rules ->
     let open Pathname in
-    rule "Use qmake to configure a Qt app."
-      ~dep: "%.pro"
-      ~prod: "%.Makefile"
-      (fun env _build ->
-         let input = env "%.pro" in
-         let output = env "%.Makefile" in
-         let tags = tags_of_pathname (env "%.pro") in
-         Cmd (S [A (find_one "qmake"); T tags; A "-o"; P output; P input]));
-    rule "Use make to build a Qt app. To fool OASIS, it has extension .cxxnative.byte."
-      ~dep: "%.Makefile"
+    rule "Use cmake and make to build a Qt app. To fool OASIS, it has extension .cxxnative.byte."
       ~prod:"%.cxxnative.byte"
       (fun env _build ->
-         let input = env "%.Makefile" in
-         let tags = tags_of_pathname (env "%.Makefile") in
-         Cmd (S [A (find_one "make"); T tags;
-                 A "-f"; P input]));                 
+         let subpath = dirname (env "%") in
+         let cmake_source = pwd / subpath in
+         let cmake_build = pwd / "_build" / subpath in
+         let cmake = find_one "cmake" in
+         let make = find_one "make" in
+         let cmd_cd = [Sh "cd"; P cmake_build] in
+         let cmd_run_cmake = [P cmake; P cmake_source] in
+         let njobs = ref 1 in
+         let speclist = [("-j", Arg.Set_int njobs, "Ce message n'apparaîtra jamais.")] in
+         let () = Arg.parse speclist ignore "" in
+         let cmd_run_make =
+           if !njobs > 1 then [P make; A "-j"; A (string_of_int !njobs)]
+           else if !njobs = 0 then [P make; A "-j"]
+           else [P make] in
+         let run_cmake = cmd_cd @ [Sh "&&"] @ cmd_run_cmake in
+         let run_make = cmd_cd @ [Sh "&&"] @ cmd_run_make in
+         Seq [Cmd (S run_cmake); Cmd (S run_make)])
   | _ -> ()
 
 let my_dispatch hook =
   dispatch_default hook;
-  qmake_dispatch hook
+  cmake_dispatch hook
 
 let () = Ocamlbuild_plugin.dispatch my_dispatch

@@ -1,6 +1,6 @@
 #include <climits>
 #include "dock_connexion.hpp"
-#include "dock_connexion_ui.h"
+#include "ui_dock_connexion.h"
 
 using namespace tarotv::protocol;
 using namespace tarotv::ui;
