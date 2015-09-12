@@ -903,12 +903,12 @@ let qmake_dispatch = function
   | After_rules ->
     let open Pathname in
     rule "Use qmake to configure a Qt app."
-      ~dep: "%.qmake"
+      ~dep: "%.pro"
       ~prod: "%.Makefile"
       (fun env _build ->
-         let input = env "%.qmake" in
+         let input = env "%.pro" in
          let output = env "%.Makefile" in
-         let tags = tags_of_pathname (env "%.qmake") in
+         let tags = tags_of_pathname (env "%.pro") in
          Cmd (S [A (find_one "qmake"); T tags; A "-o"; P output; P input]));
     rule "Use make to build a Qt app. To fool OASIS, it has extension .cxxnative.byte."
       ~dep: "%.Makefile"
