@@ -918,51 +918,6 @@ let qmake_dispatch = function
          let tags = tags_of_pathname (env "%.Makefile") in
          Cmd (S [A (find_one "make"); T tags;
                  A "-f"; P input]));                 
-    rule "Compile a cpp file into an object file \
-          using the c++ compiler path in setup.qmake.data."
-      ~dep:"%.cpp"
-      ~prod:"%.opp"
-      (fun env build ->
-         let output = env "%.opp" in
-         let input = env "%.cpp" in
-         let tags = tags_of_pathname input ++ "compile" in
-         Cmd (S [A (find_one "cxx");
-                 T tags; Command.atomize (find_all "cflags");
-                 A "-c"; A "-I"; P (dirname (env "%")); A "-I"; P (dirname (pwd / (env "%")));
-                 A "-o"; P output; P input]));
-    rule "Generate a moc file from a hpp header using the moc path in setup.qmake.data"
-      ~prod:"%_moc.cpp"
-      ~dep:"%.hpp"
-      (fun env _build ->
-         let output = env "%_moc.cpp" in
-         let input = env "%.hpp" in
-         let tags = tags_of_pathname input ++ "gen_moc" in
-         Cmd (S [A (find_one "moc");
-                         T tags;
-                         A "-o"; P output;
-                         P (pwd / input)]));
-    rule "Generate a Qt interface from a .ui file using the uic path in setup.qmake.data"
-      ~prod:"%_ui.h"
-      ~dep:"%.ui"
-      (fun env _build ->
-         let output = env "%_ui.h" in
-         let input = env "%.ui" in
-         let tags = tags_of_pathname input ++ "gen_ui" in
-         Cmd (S [A (find_one "uic");
-                 T tags;
-                 A "-o"; P output;
-                 P (pwd / input)]));
-    rule "Generate a Qt resource from a .qrc file using the rcc path in setup.qmake.data"
-      ~prod:"%_qrc.cpp"
-      ~dep:"%.qrc"
-      (fun env _build ->
-         let output = env "%_qrc.cpp" in
-         let input = env "%.qrc" in
-         let tags = tags_of_pathname input ++ "gen_rc" in
-         Cmd (S [A (find_one "rcc");
-                 T tags;
-                 A "-o"; P output;
-                 P (pwd / input)]));
   | _ -> ()
 
 let my_dispatch hook =
