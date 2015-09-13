@@ -12,9 +12,9 @@
 #include "q_requests.hpp"
 #include "joueur_hors_jeu.hpp"
 
-#define on_triggered(action) on_##action##_triggered()
-
 typedef QMap<QString, tarotv::protocol::value> QStringValueMap;
+
+#define on_triggered(action) on_##action##_triggered()
 
 namespace Ui{
   class main_window;

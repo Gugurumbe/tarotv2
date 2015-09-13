@@ -188,6 +188,7 @@ void fenetre::run_bus(){
   m_bus->run();
 }
 void fenetre::end_of_bus(){
+  qDebug()<<"Entrée en jeu !";
   emit message(tr("Entrée en jeu !"));
   emit en_jeu(true);
 }

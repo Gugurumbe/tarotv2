@@ -70,7 +70,6 @@ module Make (Backend:BACKEND) (Frontend:FRONTEND) = struct
     in
     match nom with
     | "identifier" ->
-      let () = Printf.printf "Identification demandée !\n%!" in
       let () = attendus 1 in
       (Jhj.nouveau (Value.to_string (find "nom")))
       >>= fun id -> return

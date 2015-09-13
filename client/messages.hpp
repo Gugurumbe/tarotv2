@@ -10,6 +10,9 @@
 #include "value.hpp"
 
 namespace tarotv{
+  namespace game{
+    typedef int carte;
+  };
   namespace protocol{
     class invalid_message_structure: public std::runtime_error{
     public: invalid_message_structure(const std::string & err):
@@ -47,6 +50,35 @@ namespace tarotv{
     };
     struct message get_message(const value & v);
     typedef struct message message;
+    enum t_message_jeu{
+      nouvelle_manche, enchere, appel, chien_devoile, ecart_effectue,
+      jeu, poignee_montree, carte_jouee, pli_termine, manche_terminee
+    };
+    struct message_jeu{
+      enum t_message_jeu evenement;
+      int mon_numero;
+      int numero_manche;
+      std::vector<tarotv::game::carte> mon_jeu;
+      std::vector<tarotv::game::carte> chien;
+      std::vector<int> encheres;
+      std::vector<int> preneur;
+      std::vector<tarotv::game::carte> carte_appelee;
+      std::vector<std::vector<tarotv::game::carte> > ecart;
+      std::vector<bool> chelem_demande;
+      std::vector<std::vector<tarotv::game::carte> > poignees_montrees;
+      std::vector<int> entameur;
+      std::vector<std::vector<tarotv::game::carte> > pli_en_cours;
+      std::vector<int> dernier_entameur;
+      std::vector<std::vector<tarotv::game::carte> > dernier_pli;
+      std::vector<int> score;
+      bool doit_priser;
+      bool doit_appeler;
+      bool doit_ecarter;
+      bool doit_decider_chelem;
+      bool peut_montrer_poignee;
+      bool doit_jouer;
+    };
+    struct message_jeu get_message_jeu(const value & v);
   };
 };
 

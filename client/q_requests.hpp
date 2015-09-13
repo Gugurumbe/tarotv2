@@ -1,4 +1,3 @@
-// -*- compile-command: "cd ../../ && make -j 5" -*-
 #ifndef Q_REQUESTS_DEFINI
 #define Q_REQUESTS_DEFINI
 
@@ -7,6 +6,8 @@
 #include "messages.hpp"
 #include <QStringList>
 #include <QHostAddress>
+
+typedef QMap<QString, tarotv::protocol::value> QStringValueMap;
 
 namespace tarotv{
   namespace client{
@@ -138,6 +139,30 @@ namespace tarotv{
       void set_idle(QString);
       void check(tarotv::protocol::message);
     private: bool m_running; const QHostAddress m_addr; const QString m_id;
+    };
+    class tarotv_game_request: public tarotv_request{
+      Q_OBJECT
+    public:
+      tarotv_game_request(QObject * parent = 0);
+    public slots:
+      void do_request(value_socket * sock, QString id,
+		      QString commande, QStringValueMap args);
+    signals:
+      void tarotv_game_response(tarotv::protocol::value);
+      void tarotv_game_refused(tarotv::protocol::value);
+    private slots:
+      void tarotv_accepted(tarotv::protocol::value);
+    };
+    class game_peek_message: public tarotv_game_request{
+      Q_OBJECT
+    public:
+      game_peek_message(QObject * parent = 0);
+    public slots:
+      void do_request(value_socket * sock, QString id);
+    signals:
+      void has_message(tarotv::protocol::message_jeu);
+    private slots:
+      void decrypter(tarotv::protocol::value);
     };
   };
 };

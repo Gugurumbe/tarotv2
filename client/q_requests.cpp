@@ -1,4 +1,3 @@
-// -*- compile-command: "cd ../../ && make -j 5" -*-
 #include "q_requests.hpp"
 #include <QString>
 
@@ -34,6 +33,7 @@ void request::disconnect_from_socket(){
 }
 
 void request::send_disconnection_error(){
+  qDebug()<<"The server closed the connection.";
   emit error("The server closed the connection.");
 }
 
@@ -58,17 +58,20 @@ void tarotv_request::get_response(value v){
       emit tarotv_response(res);
     }
     else if(code == "ERR"){
+      qDebug()<<"ERR received : " << QString::fromStdString(v.print());
       emit tarotv_refused(res);
     }
     else{
       QString err = "The server didn't understand a request: " +
 	QString::fromStdString(v.print());
+      qDebug()<<err;
       emit error(err);
     }
   }
   else{
     QString err = "The server can't answer the request: " +
       QString::fromStdString(v.print());
+    qDebug()<<err;
     emit error(err);
   }
 }
@@ -98,12 +101,14 @@ void config_request::transform(tarotv::protocol::value v){
       QString err = "Cannot parse config response from "
 	+ QString::fromStdString(c.print()) + ". "
 	+ QString::fromStdString(i.what());
+      qDebug()<<err;
       emit error(err);
     }
   }
   else{
     QString err = "Cannot parse config response from "
       + QString::fromStdString(v.print()) + ".";
+    qDebug()<<err;
     emit error(err);
   }
 }
@@ -130,12 +135,14 @@ void id_request::id_transform(value v){
   if(!v.to_labelled(n, id) || id.type() != value::is_string){
     QString err = "Cannot parse id response from "
       + QString::fromStdString(v.print()) + ".";
+    qDebug()<<err;
     emit error(err);
   }
   else if(n != "id"){
     QString err = "Cannot parse id response from "
       + QString::fromStdString(v.print()) + ": unexpected argument '"
       + QString::fromStdString(n) + "', expected 'id'.";
+    qDebug()<<err;
     emit error(err);    
   }
   else{
@@ -172,6 +179,7 @@ void peek_request::peek_transform(tarotv::protocol::value v){
   if(!v.to_labelled(label, rep)){
     QString err = "Cannot parse peek response from "
       + QString::fromStdString(v.print()) + ".";
+    qDebug()<<err;
     emit error(err);
   }
   else{
@@ -183,6 +191,7 @@ void peek_request::peek_transform(tarotv::protocol::value v){
       QString err = "Cannot parse peek response from "
 	+ QString::fromStdString(v.print()) + ". "
 	+ QString::fromStdString(i.what());
+      qDebug()<<err;
       emit error(err);
     }
   }
@@ -190,6 +199,7 @@ void peek_request::peek_transform(tarotv::protocol::value v){
 void peek_request::peek_refused(tarotv::protocol::value v){
   QString err = "Peek request has been refused: "
     + QString::fromStdString(v.print());
+  qDebug()<<err;
   emit error(err);
 }
 
@@ -249,7 +259,7 @@ cancel_inv_request::cancel_inv_request(QObject * parent): tarotv_request(parent)
 void cancel_inv_request::do_request(value_socket * sock, QString id){
   std::vector<value> args;
   args.push_back(value::of_labelled("id", value(id.toStdString())));
-  tarotv_request::do_request(sock, "annuer_invitation", args);
+  tarotv_request::do_request(sock, "annuler_invitation", args);
 }
 
 msg_bus::msg_bus(const QHostAddress & addr, const QString & id, QObject * parent):
@@ -260,6 +270,7 @@ msg_bus::msg_bus(const QHostAddress & addr, const QString & id, QObject * parent
 }
 
 void msg_bus::run(){
+  qDebug()<<"Running the bus.";
   if(!m_running){    
     m_running = true;
     value_socket * sock = new value_socket();
@@ -274,38 +285,121 @@ void msg_bus::run(){
     QObject::connect(req, SIGNAL(error(QString)), this, SLOT(set_idle(QString)));
     
     req->do_request(sock, m_id);
+    qDebug()<<"Peek request done.";
   }
 }
 
 void msg_bus::check(tarotv::protocol::message message){
+  qDebug()<<"Peek response type : " << (int)(message.t);
   if(message.t == tarotv::protocol::is_en_jeu){
     m_running = false;
     emit end();
+    qDebug()<<"End of the bus.";
   }
-  else should_pop();
+  else {
+    qDebug()<<"Should pop.";
+    should_pop();
+  }
 }
 
 void msg_bus::should_pop(){
-  if(m_running){    
+  qDebug()<<"Requesting pop.";
+  if(m_running){
+    qDebug()<<"Bus running : ok";
     m_running = false;
     value_socket * sock = new value_socket();
     QObject::connect(sock, SIGNAL(disconnected()), sock, SLOT(deleteLater()));
     sock->connectToHost(m_addr, 45678);
     pop_request * req = new pop_request(sock);
 
-    QObject::connect(req, SIGNAL(ok()), this, SLOT(run()));
-    QObject::connect(req, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
+    QObject::connect(req, SIGNAL(response(tarotv::protocol::value)), this, SLOT(run()));
+    QObject::connect(req, SIGNAL(error(QString)), this, SLOT(run()));
+    // I could care less #xkcd
     
     req->do_request(sock, m_id);
+    qDebug()<<"Pop done.";
   }
 }
 
 void msg_bus::set_idle(QString why){
+  qDebug()<<"Bus idle : "<<why;
   m_running = false;
   if(why == "The remote host closed the connection"){
+    qDebug()<<"NP.";
     run();
   }
   else {
+    qDebug() << "Bus error.";
     emit error(why);
+  }
+}
+
+tarotv_game_request::tarotv_game_request(QObject * parent):
+  tarotv_request(parent){
+  QObject::connect(this, SIGNAL(tarotv_response(tarotv::protocol::value)),
+		   this, SLOT(tarotv_accepted(tarotv::protocol::value)));
+}
+
+void tarotv_game_request::do_request(value_socket * sock,
+				     QString id,
+				     QString commande,
+				     QStringValueMap q_sous_args){
+  std::vector<value> args;
+  std::map<std::string, tarotv::protocol::value> sous_args;
+  for(QStringValueMap::const_iterator i = q_sous_args.begin();
+      i != q_sous_args.end(); i++){
+    sous_args.insert
+      (std::pair<std::string, tarotv::protocol::value>
+       (i.key().toStdString(), i.value()));
+  }
+  value v = value::of_labelled(commande.toStdString(), value::of_table(sous_args));
+  args.push_back(value::of_labelled("id", value(id.toStdString())));
+  args.push_back(value::of_labelled("arguments", v));
+  tarotv_request::do_request(sock, "jeu", args);
+}
+
+void tarotv_game_request::tarotv_accepted(tarotv::protocol::value accepte){
+  value res;
+  string code;
+  if(accepte.to_labelled(code, res)){
+    if(code == "OK"){
+      emit tarotv_game_response(res);
+    }
+    else if(code == "ERR"){
+      emit tarotv_game_refused(res);
+    }
+    else{
+      QString err = "The game server didn't understand a request: " +
+	QString::fromStdString(accepte.print());
+      emit error(err);
+    }
+  }
+  else{
+    QString err = "The game server can't answer the request: " +
+      QString::fromStdString(accepte.print());
+    emit error(err);
+  }  
+}
+
+game_peek_message::game_peek_message(QObject * parent):
+  tarotv_game_request(parent){
+  QObject::connect(this, SIGNAL(tarotv_game_response(tarotv::protocol::value)),
+		   this, SLOT(decrypter(tarotv::protocol::value)));
+}
+
+void game_peek_message::do_request(value_socket * sock, QString id){
+  tarotv_game_request::do_request(sock, id, "peek_message", QStringValueMap());
+}
+
+void game_peek_message::decrypter(value v){
+  try{
+    message_jeu msg = get_message_jeu(v);
+    emit has_message(msg);
+  }
+  catch(invalid_message_structure i){
+    QString err = "Cannot parse peek response from "
+      + QString::fromStdString(v.print()) + ". "
+      + QString::fromStdString(i.what());
+    emit error(err);
   }
 }

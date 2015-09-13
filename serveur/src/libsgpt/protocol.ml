@@ -54,7 +54,7 @@ let of_message m =
   add_iopt "entameur" m.entameur;
   add "pli_en_cours" (of_carte_matrix m.pli_en_cours);
   add_iopt "dernier_entameur" m.dernier_entameur;
-  add "pli_en_cours" (of_carte_matrix m.dernier_pli);
+  add "dernier_pli" (of_carte_matrix m.dernier_pli);
   add "score" (of_ints m.score);
   add "doit_priser" (of_bool m.doit_priser);
   add "doit_appeler" (of_bool m.doit_appeler);

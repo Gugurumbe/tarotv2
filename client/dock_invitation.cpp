@@ -1,4 +1,3 @@
-// -*- compile-command: "cd ../../ && make -j 5" -*-
 #include "dock_invitation.hpp"
 #include "ui_dock_invitation.h"
 
@@ -52,16 +51,18 @@ void form_widget::set_types(tarotv::protocol::config cfg){
   }
   for(std::map<std::string, config::elt>::const_iterator i = cfg.elts.begin();
       i != cfg.elts.end(); i++){
-    incr_spinbox * sb = 0;
-    switch(i->second.t){
-    case config::is_int:
-      sb = new incr_spinbox;
-      sb->start(i->second.u.as_int.min, i->second.u.as_int.incr);
-      sb->setMinimum(i->second.u.as_int.min);
-      sb->setMaximum(i->second.u.as_int.max);
+    if(i->first != "nplayers"){
+      incr_spinbox * sb = 0;
+      switch(i->second.t){
+      case config::is_int:
+	sb = new incr_spinbox;
+	sb->start(i->second.u.as_int.min, i->second.u.as_int.incr);
+	sb->setMinimum(i->second.u.as_int.min);
+	sb->setMaximum(i->second.u.as_int.max);
       m_layout->addRow(QString::fromStdString(i->second.nom), sb);
       m_widgets.insert(QString::fromStdString(i->first), sb);
       break;
+      }
     }
   }
 }
@@ -184,6 +185,7 @@ void dock_invitation::moi(QString superchampion){
 }
 
 void dock_invitation::nouvelle_invitation(QString joueur, QStringList invites, QStringValueMap parametres){
+  m_invitations.remove(joueur);
   m_invitations.insert(joueur, QPair<QStringList, QStringValueMap>(invites, parametres));
   emit joueurs_maj();
   check();
