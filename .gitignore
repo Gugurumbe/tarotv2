@@ -17,8 +17,9 @@ setup.log
 *.lib
 *.so
 *.otarget
-src/client_qt/Makefile
-src/client_qt/client_qt
-src/client_qt/moc_*.cpp
-src/client_qt/qrc_*.cpp
-src/client_qt/ui_*.h
+client/Makefile
+client/client_qt
+client/moc_*.cpp
+client/qrc_*.cpp
+client/ui_*.h
+build/

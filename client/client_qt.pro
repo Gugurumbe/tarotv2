@@ -5,6 +5,7 @@
 TEMPLATE = app
 TARGET = client_qt
 INCLUDEPATH += .
+QT += network widgets core
 
 # Input
 HEADERS += config.hpp \

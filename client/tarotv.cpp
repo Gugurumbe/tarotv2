@@ -170,6 +170,7 @@ void fenetre::has_message(tarotv::protocol::message msg){
     emit nouveau_message(QString::fromStdString(msg.text.joueur),
 			 QString::fromStdString(msg.text.contenu));
     break;
+  case is_en_jeu: break; /* le bus le gère */
   }
 }
 void fenetre::run_bus(){
