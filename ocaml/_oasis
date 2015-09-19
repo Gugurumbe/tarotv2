@@ -26,7 +26,7 @@ Library libsgpt
   Modules: Tarotv
   InternalModules: Partie, Verifications, Liste, Partie_types,
     Partie_compter_points, Partie_arbitre, Partie_moteur,
-    Table, Protocol
+    Table, Protocol, Carte
   BuildDepends: lwt, libtarotv_server, libtarotv_protocol
 
 Library libmgmt
@@ -41,6 +41,13 @@ Library libcalculator
   BuildTools: ocamlbuild
   Modules:    Calculator
   BuildDepends: lwt, libtarotv_server, libtarotv_protocol
+
+Library libtarotv_ascii
+  Path: src/ascii
+  BuildTools: ocamlbuild
+  Modules: Renderer
+  InternalModules: Carte
+  CompiledObject:best
   
 Executable "calculator-server"
   Path:       src/calculator
@@ -62,3 +69,10 @@ Executable "tarotv-sgsj"
   MainIs: main.ml
   BuildDepends: libtarotv_server, libmgmt, libsgpt, libtarotv_protocol
   CompiledObject: best
+
+Executable "tarotv-ascii-renderer"
+  Path: src/ascii_renderer
+  BuildTools: ocamlbuild
+  MainIs: main.ml
+  CompiledObject:best
+  BuildDepends: libtarotv_ascii

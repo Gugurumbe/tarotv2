@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 0cb23b6917f9fe6e537f209328bf9046)
+# DO NOT EDIT (digest: 39581c6d292340cda9d9d4816f271ce3)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -44,6 +44,8 @@ true: annot, bin_annot
 <src/libcalculator/*.ml{,i,y}>: pkg_unix
 <src/libcalculator/*.ml{,i,y}>: use_libtarotv_protocol
 <src/libcalculator/*.ml{,i,y}>: use_libtarotv_server
+# Library libtarotv_ascii
+"src/ascii/libtarotv_ascii.cmxs": use_libtarotv_ascii
 # Executable calculator-server
 <src/calculator/main.{native,byte}>: pkg_lwt
 <src/calculator/main.{native,byte}>: pkg_lwt.unix
@@ -85,4 +87,8 @@ true: annot, bin_annot
 <src/sgsj/*.ml{,i,y}>: use_libsgpt
 <src/sgsj/*.ml{,i,y}>: use_libtarotv_protocol
 <src/sgsj/*.ml{,i,y}>: use_libtarotv_server
+# Executable tarotv-ascii-renderer
+<src/ascii_renderer/main.{native,byte}>: use_libtarotv_ascii
+<src/ascii_renderer/*.ml{,i,y}>: use_libtarotv_ascii
 # OASIS_STOP
+<src/ascii>: include

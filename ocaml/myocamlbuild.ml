@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 42b14c4488b83101201c64c0e500dd65) *)
+(* DO NOT EDIT (digest: 5e92d69fb5c637ca8372e310091b877b) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -613,7 +613,8 @@ let package_default =
           ("libtarotv_server", ["src/libtarotv_server"], []);
           ("libsgpt", ["src/libsgpt"], []);
           ("libmgmt", ["src/libsgsj"], []);
-          ("libcalculator", ["src/libcalculator"], [])
+          ("libcalculator", ["src/libcalculator"], []);
+          ("libtarotv_ascii", ["src/ascii"], [])
        ];
      lib_c = [];
      flags = [];
@@ -632,7 +633,8 @@ let package_default =
           ("src/libsgpt", ["src/libtarotv_server"; "src/value"]);
           ("src/libcalculator", ["src/libtarotv_server"; "src/value"]);
           ("src/calculator",
-            ["src/libcalculator"; "src/libtarotv_server"; "src/value"])
+            ["src/libcalculator"; "src/libtarotv_server"; "src/value"]);
+          ("src/ascii_renderer", ["src/ascii"])
        ]
   }
   ;;
@@ -641,6 +643,29 @@ let conf = {MyOCamlbuildFindlib.no_automatic_syntax = false}
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
-# 645 "myocamlbuild.ml"
+# 647 "myocamlbuild.ml"
 (* OASIS_STOP *)
-let () = Ocamlbuild_plugin.dispatch dispatch_default
+
+let my_dispatch = function
+  | After_rules ->
+    let open Pathname in
+    rule "Embed the cards in a .ml file"
+      ~prod:"%.ml"
+      ~dep:"%.tarotvres"
+      (fun env _build ->
+         let source = env "%.tarotvres" in
+         let dest = env "%.ml" in
+         let source_abs = pwd / source in
+         let dest_in_build = dest in
+         let compiler = pwd / "resource_compiler.ml" in
+         let () = Printf.printf "Building %s from %s.\n%!"
+             dest_in_build source_abs in
+         Cmd (S [Sh "ocaml"; P compiler;
+                 A "-o"; P dest_in_build; P source_abs]));
+  | _ -> ()
+
+let dispatch hook =
+  dispatch_default hook;
+  my_dispatch hook
+
+let () = Ocamlbuild_plugin.dispatch dispatch
