@@ -221,4 +221,11 @@ let print pretty value =
     | ([], _) -> failwith "Ne peut arriver"
   in
   let () = aux 0 ([value], []) in
-  Buffer.to_bytes b
+  let res = Buffer.to_bytes b in
+  let () = Printf.printf "Result : \n%s%!" res in
+  res
+
+let _ = Callback.register "caml_create_parser"
+    read
+
+let _ = Callback.register "caml_print_value" print

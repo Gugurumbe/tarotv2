@@ -46,8 +46,17 @@ Library libtarotv_ascii
   Path: src/ascii
   BuildTools: ocamlbuild
   Modules: Renderer
-  InternalModules: Carte
+  InternalModules: 
   CompiledObject:best
+
+Library libtarotv_client
+  Path: src/libclient
+  BuildTools: ocamlbuild
+  Modules: Interface, Client_config, Liste_invitations
+  InternalModules: Stubs, Client_proto
+  CSources: stubs_value.c, stubs.h, stubs_private.h,
+    stubs_config.c
+  BuildDepends: libtarotv_protocol
   
 Executable "calculator-server"
   Path:       src/calculator

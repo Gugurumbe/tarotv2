@@ -104,18 +104,112 @@ module Make (Database:DATABASE) (Arbitre:ARBITRE) (Timeout:TIMEOUT) (Joueur_en_j
     with exn -> fail (match exn with
         | Not_found -> Joueur_inconnu
         | _ -> exn)
+  let set_invitation_unsafe id invit =
+    match invit with
+    | None ->
+      (* Tout le monde reçoit le message *)
+      (return (Database.find db id))
+      >>= (fun t ->
+          Timeout.retarder t.timeout;
+          let ancienne = t.invitation in
+          let () = t.invitation <- None in
+          match ancienne with
+          | None -> return ()
+          | Some ancienne ->
+            return
+              (Database.iter
+                 (fun autre -> add_ev autre (Invitation (None, t.nom)))
+                 db))
+    | Some (liste, parametre) -> (return (Database.find db id))
+      >>= (fun t ->
+          Timeout.retarder t.timeout;
+          let moi_present = List.exists ((=) t.nom) liste in
+          let rec tous_differents = function
+            | [] -> true
+            | a :: b when not (List.exists ((=) a) b) ->
+              tous_differents b
+            | _ -> false
+          in
+          let tous_differents = tous_differents liste in
+          let joueurs_concernes = Hashtbl.create (List.length liste) in
+          let examiner autre =
+            if List.exists ((=) autre.nom) liste
+            then Hashtbl.add joueurs_concernes autre.nom autre
+          in
+          if not tous_differents || not moi_present then
+            fail Invitation_refusee
+          else return ()
+            >>= (fun () -> return (Database.iter examiner db))
+            >>= (fun () ->
+                try let liste = List.map (Hashtbl.find joueurs_concernes) liste in
+                  (Arbitre.accepter_invitation (List.length liste) parametre)
+                  >>= function
+                  | true ->
+                    return liste
+                  | false ->
+                    fail Invitation_refusee
+                with Not_found ->
+                  fail Joueur_inconnu)
+            >>= (fun liste_joueurs ->
+                let () = Printf.printf "L'invitation est valide.\n%!" in
+                let liste_ids = List.map (fun j -> j.id) liste_joueurs in
+                let () = t.invitation <- Some (liste_ids, parametre) in
+                (* On informe tout le monde *)
+                (return (Database.iter 
+                           (fun j ->
+                              add_ev j (Invitation (Some (liste, parametre), t.nom)))
+                           db))
+                >>= (fun () -> return liste_ids))
+            >>= (fun liste_ids ->
+                let () = Printf.printf "Tout le monde en a été informé.\n%!" in
+                (* Il ne reste plus qu'à vérifier si tout le monde est d'accord *)
+                let ok = ref true in
+                let examiner j =
+                  match (t.invitation, j.invitation) with
+                  | (None, _) -> failwith "Impossible"
+                  | (Some (liste_t, param_t), Some (liste_j, param_j))
+                    when liste_t = liste_j
+                      && Value.memes_elements Value.listes_egales param_t param_j ->
+                    ()
+                  | _ ->
+                    ok := false
+                in
+                (return (Database.iter examiner db))
+                >>= (fun () -> return (liste_ids, !ok)))
+            >>= (fun (liste_ids, ok) ->
+                if not ok then return ()
+                else
+                  let () = Printf.printf "L'invitation a réussi entre %s (%s).\n%!"
+                      (Bytes.concat ", " liste_ids) (Value.print false parametre) in
+                  Joueur_en_jeu.creer_partie liste_ids parametre >>= fun () ->
+                  let () = List.iter (Database.remove db) liste_ids in
+                  let () = List.iter (fun depart -> wakeup depart En_jeu) liste_ids in
+                  let informer gus =
+                    List.iter (add_ev gus)
+                      (List.map (fun nom -> Depart_joueur nom) liste)
+                  in
+                  return (Database.iter informer db)))
+  let set_invitation id invit = with_mutex (fun () -> set_invitation_unsafe id invit)
   let deconnecter_unsafe id =
     find id >>= fun t ->
+    let invitations_a_annuler = ref [] in
     let informer gus =
       let () = match t.invitation with
         | None -> ()
         | _ -> add_ev gus (Invitation (None, t.nom)) in
+      let () = match gus.invitation with
+        | Some (inv, _) when List.exists ((=) t.nom) inv ->
+          invitations_a_annuler := gus.id :: !invitations_a_annuler
+        | _ -> () in
       add_ev gus (Depart_joueur t.nom)
     in
     Database.iter informer db;
     Database.remove db id;
-    Lwt.return ()
-  let deconnecter id = with_mutex (fun () -> deconnecter_unsafe id)
+    Lwt.return (List.rev !invitations_a_annuler)
+  let deconnecter id =
+    let annuler_invitation id = set_invitation id None in
+    with_mutex (fun () -> deconnecter_unsafe id) >>=
+    Lwt_list.iter_s annuler_invitation
   let nouveau_unsafe nom =
     let iter = Database.iter in
     let rec creer_id () =
@@ -199,90 +293,4 @@ module Make (Database:DATABASE) (Arbitre:ARBITRE) (Timeout:TIMEOUT) (Joueur_en_j
     else let informer gus = add_ev gus (Message (t.nom, message)) in
       let () = Database.iter informer db in
       return ()
-  let set_invitation_unsafe id invit =
-    match invit with
-    | None ->
-      (* Tout le monde reçoit le message *)
-      (return (Database.find db id))
-      >>= (fun t ->
-          Timeout.retarder t.timeout;
-          let ancienne = t.invitation in
-          let () = t.invitation <- None in
-          match ancienne with
-          | None -> return ()
-          | Some ancienne ->
-            return
-              (Database.iter
-                 (fun autre -> add_ev autre (Invitation (None, t.nom)))
-                 db))
-    | Some (liste, parametre) ->      (return (Database.find db id))
-      >>= (fun t ->
-          Timeout.retarder t.timeout;
-          let moi_present = List.exists ((=) t.nom) liste in
-          let rec tous_differents = function
-            | [] -> true
-            | a :: b when not (List.exists ((=) a) b) ->
-              tous_differents b
-            | _ -> false
-          in
-          let tous_differents = tous_differents liste in
-          let joueurs_concernes = Hashtbl.create (List.length liste) in
-          let examiner autre =
-            if List.exists ((=) autre.nom) liste
-            then Hashtbl.add joueurs_concernes autre.nom autre
-          in
-          if not tous_differents || not moi_present then
-            fail Invitation_refusee
-          else return ()
-            >>= (fun () -> return (Database.iter examiner db))
-            >>= (fun () ->
-                try let liste = List.map (Hashtbl.find joueurs_concernes) liste in
-                  (Arbitre.accepter_invitation (List.length liste) parametre)
-                  >>= function
-                  | true ->
-                    return liste
-                  | false ->
-                    fail Invitation_refusee
-                with Not_found ->
-                  fail Joueur_inconnu)
-            >>= (fun liste_joueurs ->
-                let () = Printf.printf "L'invitation est valide.\n%!" in
-                let liste_ids = List.map (fun j -> j.id) liste_joueurs in
-                let () = t.invitation <- Some (liste_ids, parametre) in
-                (* On informe tout le monde *)
-                (return (Database.iter 
-                           (fun j ->
-                              add_ev j (Invitation (Some (liste, parametre), t.nom)))
-                           db))
-                >>= (fun () -> return liste_ids))
-            >>= (fun liste_ids ->
-                let () = Printf.printf "Tout le monde en a été informé.\n%!" in
-                (* Il ne reste plus qu'à vérifier si tout le monde est d'accord *)
-                let ok = ref true in
-                let examiner j =
-                  match (t.invitation, j.invitation) with
-                  | (None, _) -> failwith "Impossible"
-                  | (Some (liste_t, param_t), Some (liste_j, param_j))
-                    when liste_t = liste_j
-                      && Value.memes_elements Value.listes_egales param_t param_j ->
-                    ()
-                  | _ ->
-                    ok := false
-                in
-                (return (Database.iter examiner db))
-                >>= (fun () -> return (liste_ids, !ok)))
-            >>= (fun (liste_ids, ok) ->
-                if not ok then return ()
-                else
-                  let () = Printf.printf "L'invitation a réussi entre %s (%s).\n%!"
-                      (Bytes.concat ", " liste_ids) (Value.print false parametre) in
-                  Joueur_en_jeu.creer_partie liste_ids parametre >>= fun () ->
-                  let () = List.iter (Database.remove db) liste_ids in
-                  let () = List.iter (fun depart -> wakeup depart En_jeu) liste_ids in
-                  let informer gus =
-                    List.iter (add_ev gus)
-                      (List.map (fun nom -> Depart_joueur nom) liste)
-                  in
-                  return (Database.iter informer db)))
-  let set_invitation id invit = with_mutex (fun () -> set_invitation_unsafe id invit)
 end
