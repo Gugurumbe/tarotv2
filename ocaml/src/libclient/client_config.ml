@@ -71,6 +71,3 @@ let respecte cfg nplayers liste =
       | _ -> false
   in
   verifier a_trouver donnees
-
-let _ = Callback.register "caml_config_respecte"
-    respecte

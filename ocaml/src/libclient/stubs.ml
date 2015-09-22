@@ -108,8 +108,10 @@ let _ = Callback.register "caml_alloc_interface"
        
 let _ = Callback.register "caml_delete_interface"
     (fun id ->
-       let () = apply_to (fun i -> i#send_delete_signal) id in
-       let () = interfaces := IntMap.remove id !interfaces in ())
+       try
+         let () = apply_to (fun i -> i#send_delete_signal) id in
+         let () = interfaces := IntMap.remove id !interfaces in ()
+       with _ -> ())
 
 let _ = Callback.register "caml_verifier_invitation"
     (apply_to (fun i -> i#verifier_invitation))

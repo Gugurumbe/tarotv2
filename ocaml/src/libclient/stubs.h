@@ -146,7 +146,7 @@ int parser_read(char c, struct tarotv_value_parser * p,
 char * print_value(struct tarotv_value * v, int pretty);
 // Remember to free the chars !
 void delete_interface(int i);
-int verifier_invitation(int i, int njoueurs, const int nparams,
+int verifier_invitation(int i, int njoueurs, int nparams,
 			const struct tarotv_config_value * values);
 void set_host(int i, const struct tarotv_sockaddr * addr);
 void identifier(int i, size_t taille_nom, const char * nom);

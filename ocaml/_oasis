@@ -55,7 +55,7 @@ Library libtarotv_client
   Modules: Interface, Client_config, Liste_invitations
   InternalModules: Stubs, Client_proto
   CSources: stubs_value.c, stubs.h, stubs_private.h,
-    stubs_config.c
+    stubs_interface.c
   BuildDepends: libtarotv_protocol
   
 Executable "calculator-server"
