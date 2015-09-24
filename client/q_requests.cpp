@@ -153,7 +153,7 @@ void id_request::id_refused(tarotv::protocol::value){
   emit id_refused();
 }
 
-logout_request::logout_request(QObject * parent): tarotv_request(parent){
+out_request::logout_request(QObject * parent): tarotv_request(parent){
   connect(this, SIGNAL(tarotv_response(tarotv::protocol::value)),
 	  this, SIGNAL(logged_out()));
 }

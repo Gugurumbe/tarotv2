@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: cc95accd5233babc4ce6f4fef453fd3e) *)
+(* DO NOT EDIT (digest: 5e92d69fb5c637ca8372e310091b877b) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -614,15 +614,9 @@ let package_default =
           ("libsgpt", ["src/libsgpt"], []);
           ("libmgmt", ["src/libsgsj"], []);
           ("libcalculator", ["src/libcalculator"], []);
-          ("libtarotv_ascii", ["src/ascii"], []);
-          ("libtarotv_client", ["src/libclient"], [])
+          ("libtarotv_ascii", ["src/ascii"], [])
        ];
-     lib_c =
-       [
-          ("libtarotv_client",
-            "src/libclient",
-            ["src/libclient/stubs.h"; "src/libclient/stubs_private.h"])
-       ];
+     lib_c = [];
      flags = [];
      includes =
        [
@@ -637,7 +631,6 @@ let package_default =
           ("src/libtarotv_server", ["src/value"]);
           ("src/libsgsj", ["src/libtarotv_server"; "src/value"]);
           ("src/libsgpt", ["src/libtarotv_server"; "src/value"]);
-          ("src/libclient", ["src/value"]);
           ("src/libcalculator", ["src/libtarotv_server"; "src/value"]);
           ("src/calculator",
             ["src/libcalculator"; "src/libtarotv_server"; "src/value"]);
@@ -650,7 +643,7 @@ let conf = {MyOCamlbuildFindlib.no_automatic_syntax = false}
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
-# 654 "myocamlbuild.ml"
+# 647 "myocamlbuild.ml"
 (* OASIS_STOP *)
 
 let my_dispatch = function
